@@ -1,0 +1,6 @@
+{# Avatar. Variables: initials (obligatoria), image_url (opcional), size ("lg", opcional), inverse (fondo blanco sobre color, opcional). #}
+{% if image_url %}
+<img class="ws-avatar rounded-circle object-fit-cover{% if size %} ws-avatar--{{ size }}{% endif %}" src="{{ image_url }}" alt="" loading="lazy">
+{% else %}
+<span class="ws-avatar rounded-circle d-inline-flex align-items-center justify-content-center fw-bold {% if inverse %}bg-white text-primary{% else %}bg-primary-subtle text-primary{% endif %}{% if size %} ws-avatar--{{ size }}{% endif %}" aria-hidden="true">{% if initials %}{{ initials }}{% else %}<i class="bx bx-user"></i>{% endif %}</span>
+{% endif %}

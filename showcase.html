@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Workspace · La intranet que tu equipo sí quiere abrir</title>
+  <meta name="description" content="Workspace: la intranet móvil que no se siente como trabajo. Publicaciones, reacciones, avisos, personas y mucho más, en una app web lista para tu empresa.">
+  <!--
+    Presentación comercial de Workspace (página independiente: todo por CDN, nada del proyecto).
+
+    · En desarrollo, ábrela desde el propio Django: http://localhost:8000/showcase/ o, para que el
+      QR sirva en el teléfono, http://<IP de tu PC>:8000/showcase/ (esa IP en DJANGO_ALLOWED_HOSTS del
+      .env y runserver 0.0.0.0:8000). Teléfono, QR y enlaces usan la dirección con la que la abriste.
+    · Servida aparte (python -m http.server 5500 --bind 127.0.0.1 → http://localhost:5500/showcase.html)
+      usa el mismo host en el puerto 8000. Para una dirección fija (prueba, oficial) pon APP_URL (abajo)
+      o ábrela con ?app=https://tu-dominio/ sin tocar el archivo.
+    · No con doble clic (file://): el navegador no le pasa la sesión al iframe y el login falla.
+    · Django debe permitir mostrarse en un iframe (en desarrollo ya está permitido).
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --bs-primary: #0066cc;
+      --bs-primary-rgb: 0, 102, 204;
+      --bs-body-font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --bs-body-color: #1f2430;
+      --ws-blue: #0066cc;
+      --ws-blue-2: #3d8bff;
+      --ws-yellow: #f4c600;
+      --ws-navy: #07142a;
+      --ws-navy-2: #0f2d57;
+      --ws-page-bg: #f5f6fa;
+      --ws-muted: #5c6475;
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+      --phone-scale: 0.8;
+    }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body { background: var(--ws-page-bg); color: var(--bs-body-color); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    a { color: var(--bs-primary); }
+    .text-muted-ws { color: var(--ws-muted); }
+    .text-yellow { color: var(--ws-yellow); }
+
+    /* ---------- Botones ---------- */
+    .btn { font-weight: 700; transition: transform 160ms var(--ease-out), background-color 150ms ease, color 150ms ease, box-shadow 150ms ease; }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { --bs-btn-bg: #0066cc; --bs-btn-border-color: #0066cc; --bs-btn-hover-bg: #0059b3; --bs-btn-hover-border-color: #0059b3; --bs-btn-active-bg: #004f9f; --bs-btn-active-border-color: #004f9f; box-shadow: 0 10px 30px -10px rgba(0, 102, 204, 0.7); }
+    .btn-yellow { background: var(--ws-yellow); color: #1a1400; border: 0; box-shadow: 0 10px 30px -10px rgba(244, 198, 0, 0.8); }
+    @media (hover: hover) and (pointer: fine) { .btn-yellow:hover { background: #ffd51f; color: #1a1400; } }
+    .btn-soft { background: #fff; border: 1px solid rgba(15, 23, 42, 0.08); color: #1f2430; }
+    @media (hover: hover) and (pointer: fine) { .btn-soft:hover { background: #f0f4fb; color: #0066cc; } }
+    .btn-glass { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.18); color: #fff; }
+    @media (hover: hover) and (pointer: fine) { .btn-glass:hover { background: rgba(255, 255, 255, 0.16); color: #fff; } }
+
+    /* ---------- Barra de anuncio + nav ---------- */
+    .promo { background: linear-gradient(90deg, #f4c600, #ffdd4a); color: #1a1400; font-weight: 700; font-size: 0.85rem; text-align: center; padding: 0.5rem 1rem; }
+    .promo a { color: #1a1400; text-decoration: underline; text-underline-offset: 3px; }
+    .site-nav { backdrop-filter: saturate(1.6) blur(14px); -webkit-backdrop-filter: saturate(1.6) blur(14px); background: rgba(245, 246, 250, 0.72); border-bottom: 1px solid rgba(15, 23, 42, 0.05); }
+    .brand { font-weight: 900; letter-spacing: -0.02em; color: #1f2430; text-decoration: none; }
+    .brand i { color: var(--ws-blue); }
+    .nav-link-ws { color: #1f2430; font-weight: 600; text-decoration: none; padding: 0.5rem 0.8rem; border-radius: 999px; font-size: 0.92rem; transition: background-color 150ms ease, color 150ms ease; }
+    @media (hover: hover) and (pointer: fine) { .nav-link-ws:hover { background: rgba(0, 102, 204, 0.08); color: var(--ws-blue); } }
+
+    /* ---------- Hero claro ---------- */
+    .hero { position: relative; overflow: hidden;
+      background:
+        radial-gradient(60rem 40rem at 85% -10%, rgba(0, 102, 204, 0.14), transparent 60%),
+        radial-gradient(40rem 30rem at -10% 30%, rgba(244, 198, 0, 0.14), transparent 60%),
+        var(--ws-page-bg); }
+    .hero::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(15,23,42,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.035) 1px, transparent 1px); background-size: 56px 56px; mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%); pointer-events: none; }
+    .hero > .container { position: relative; z-index: 1; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; background: #fff; border-radius: 999px; padding: 0.45rem 1rem; font-weight: 600; font-size: 0.85rem; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px -12px rgba(15, 23, 42, 0.18); }
+    .eyebrow .dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 50% { box-shadow: 0 0 0 7px rgba(34, 197, 94, 0.05); } }
+    .hero-title { font-size: clamp(2.6rem, 6.2vw, 4.6rem); font-weight: 900; letter-spacing: -0.045em; line-height: 0.98; }
+    .hero-title .grad { background: linear-gradient(100deg, #0066cc 10%, #3d8bff 55%, #0066cc 90%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero-title .swash { position: relative; white-space: nowrap; z-index: 0; }
+    .hero-title .swash::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0.04em; height: 0.2em; border-radius: 999px; background: var(--ws-yellow); z-index: -1; transform-origin: left center; opacity: 0.9; }
+    .hero-lead { font-size: clamp(1.05rem, 1.5vw, 1.25rem); font-weight: 500; line-height: 1.55; color: var(--ws-muted); }
+    .hero-lead strong { color: #1f2430; }
+    .checks { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-weight: 600; font-size: 0.9rem; color: #1f2430; }
+    .checks i { color: var(--ws-blue); font-size: 1.15rem; vertical-align: -3px; }
+    .stat { background: #fff; border-radius: 1.25rem; padding: 1rem 1.1rem; height: 100%; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); }
+    .stat strong { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.03em; display: block; line-height: 1; color: var(--ws-blue); }
+    .stat span { font-size: 0.78rem; color: var(--ws-muted); font-weight: 600; }
+    .qr-box { background: #fff; padding: 0.55rem; border-radius: 1rem; width: 108px; height: 108px; flex: none; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06); }
+    .qr-box img, .qr-box canvas { width: 100% !important; height: 100% !important; display: block; }
+
+    /* ---------- iPhone (17 Pro Max: pantalla de 440 × 956 pt) ---------- */
+    .phone-stage { position: relative; display: flex; justify-content: center; }
+    .phone-stage::before { content: ""; position: absolute; inset: 8% 4% 6%; border-radius: 40%; background: radial-gradient(closest-side, rgba(0, 102, 204, 0.35), transparent), radial-gradient(closest-side at 70% 80%, rgba(244, 198, 0, 0.35), transparent); filter: blur(40px); z-index: 0; }
+    .phone-wrap { position: relative; z-index: 1; width: calc(470px * var(--phone-scale)); height: calc(986px * var(--phone-scale)); }
+    .phone { position: absolute; top: 0; left: 0; width: 470px; height: 986px; transform: scale(var(--phone-scale)); transform-origin: top left; border-radius: 78px; padding: 15px;
+      background: linear-gradient(145deg, #c9c6c0 0%, #8f8b84 18%, #e4e1db 40%, #77736d 62%, #bdb9b2 82%, #6f6b65 100%);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.35), inset 0 0 0 6px #1b1b1d, 0 2px 4px rgba(15, 23, 42, 0.18), 0 40px 80px -30px rgba(15, 23, 42, 0.55), 0 70px 120px -60px rgba(0, 102, 204, 0.45); }
+    .phone__btn { position: absolute; width: 5px; border-radius: 3px; background: linear-gradient(90deg, #6f6b65, #c9c6c0); }
+    .phone__btn--action { left: -4px; top: 190px; height: 38px; }
+    .phone__btn--vol-up { left: -4px; top: 258px; height: 70px; }
+    .phone__btn--vol-down { left: -4px; top: 344px; height: 70px; }
+    .phone__btn--power { right: -4px; top: 300px; height: 110px; background: linear-gradient(270deg, #6f6b65, #c9c6c0); }
+    .phone__btn--camera { right: -3px; top: 560px; height: 76px; width: 4px; background: linear-gradient(270deg, #55524d, #9d9a94); }
+    .phone__screen { position: relative; width: 440px; height: 956px; border-radius: 64px; overflow: hidden; background: #fff; isolation: isolate; }
+    .phone__island { position: absolute; top: 11px; left: 50%; width: 126px; height: 37px; margin-left: -63px; background: #000; border-radius: 999px; z-index: 5; }
+    .phone__island::after { content: ""; position: absolute; right: 13px; top: 50%; width: 11px; height: 11px; margin-top: -5.5px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #2a3a5a, #05070c 70%); }
+    .phone__status { position: absolute; inset: 0 0 auto 0; height: 54px; padding: 0 34px 0 46px; display: flex; align-items: center; justify-content: space-between; font-weight: 700; font-size: 17px; color: #111; background: #fff; z-index: 4; }
+    .phone__status .icons { display: flex; align-items: center; gap: 6px; font-size: 19px; }
+    .phone__frame { position: absolute; top: 54px; left: 0; width: 440px; height: 902px; border: 0; background: var(--ws-page-bg); transition: opacity 200ms ease, filter 200ms ease; }
+    .phone__frame.is-switching { opacity: 0; filter: blur(2px); transition-duration: 150ms; }
+    .phone__home { position: absolute; bottom: 8px; left: 50%; width: 150px; height: 5px; margin-left: -75px; border-radius: 999px; background: rgba(0, 0, 0, 0.85); z-index: 5; pointer-events: none; }
+    .phone__state { position: absolute; inset: 54px 0 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem; text-align: center; padding: 2rem; background: var(--ws-page-bg); color: #1f2430; z-index: 3; transition: opacity 200ms ease; }
+    .phone__state[hidden] { display: none; }
+    .phone__state.is-leaving { opacity: 0; }
+    .phone__state i { font-size: 3rem; color: var(--bs-primary); }
+    .phone__state code { font-size: 1rem; background: #fff; padding: 0.35rem 0.6rem; border-radius: 0.5rem; color: #c7254e; }
+    .spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid rgba(0, 102, 204, 0.18); border-top-color: var(--bs-primary); animation: spin 600ms linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .tour { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem; padding: 0.3rem; background: #fff; border-radius: 999px; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 10px 30px -18px rgba(15, 23, 42, 0.25); position: relative; z-index: 2; }
+    .tour button { border: 0; background: transparent; border-radius: 999px; padding: 0.45rem 0.9rem; font-weight: 600; font-size: 0.85rem; color: var(--ws-muted); display: inline-flex; align-items: center; gap: 0.35rem; transition: background-color 150ms ease, color 150ms ease, transform 160ms var(--ease-out); }
+    .tour button:active { transform: scale(0.97); }
+    .tour button[aria-pressed="true"] { background: var(--ws-blue); color: #fff; }
+    @media (hover: hover) and (pointer: fine) { .tour button:not([aria-pressed="true"]):hover { background: #f0f4fb; color: var(--ws-blue); } }
+    .phone-tools { display: flex; gap: 0.5rem; justify-content: center; position: relative; z-index: 2; }
+    .icon-btn { width: 2.5rem; height: 2.5rem; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; padding: 0; font-size: 1.2rem; }
+
+    /* ---------- Cinta de palabras ---------- */
+    .marquee { background: var(--ws-yellow); color: #1a1400; overflow: hidden; padding: 0.9rem 0; transform: rotate(-1.2deg); margin: -1.2rem -1rem 0; position: relative; z-index: 2; box-shadow: 0 16px 40px -20px rgba(0, 0, 0, 0.4); }
+    .marquee__track { display: flex; gap: 2.5rem; width: max-content; animation: marquee 38s linear infinite; font-weight: 800; font-size: 1.05rem; letter-spacing: -0.01em; text-transform: uppercase; }
+    .marquee__track span { display: inline-flex; align-items: center; gap: 2.5rem; }
+    .marquee__track span::after { content: "✦"; font-size: 0.9rem; }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+
+    /* ---------- Secciones ---------- */
+    .section { padding: clamp(4.5rem, 9vw, 7.5rem) 0; }
+    .section-kicker { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 800; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bs-primary); background: rgba(0, 102, 204, 0.08); border-radius: 999px; padding: 0.35rem 0.8rem; }
+    .section-kicker--dark { color: var(--ws-yellow); background: rgba(244, 198, 0, 0.12); }
+    .section-title { font-weight: 900; letter-spacing: -0.04em; font-size: clamp(2rem, 4.4vw, 3.2rem); line-height: 1.04; }
+    .section-title .hl { background: linear-gradient(transparent 62%, rgba(244, 198, 0, 0.55) 62%); padding: 0 0.1em; }
+
+    /* Dolor → solución */
+    .pain { height: 100%; border-radius: 1.5rem; padding: 1.75rem; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); position: relative; }
+    .pain__before { font-size: 0.9rem; color: #9aa1b0; text-decoration: line-through; text-decoration-color: rgba(239, 68, 68, 0.6); margin-bottom: 0.75rem; }
+    .pain h3 { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; }
+    .pain p { color: var(--ws-muted); font-size: 0.93rem; margin: 0; }
+    .pain .emoji { font-size: 2rem; line-height: 1; margin-bottom: 1rem; display: block; }
+
+    /* Bento de funciones */
+    .feature { height: 100%; background: #fff; border-radius: 1.5rem; padding: 1.6rem; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); transition: transform 200ms var(--ease-out), box-shadow 200ms ease; position: relative; overflow: hidden; }
+    @media (hover: hover) and (pointer: fine) { .feature:hover { transform: translateY(-3px); box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 24px 48px -24px rgba(15, 23, 42, 0.35); } }
+    .feature__icon { width: 3rem; height: 3rem; border-radius: 0.9rem; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem; }
+    .feature h3 { font-size: 1.12rem; font-weight: 800; margin-bottom: 0.4rem; letter-spacing: -0.015em; }
+    .feature p { font-size: 0.92rem; color: var(--ws-muted); margin: 0; line-height: 1.55; }
+    .feature ul { margin: 0.9rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .feature li { font-size: 0.74rem; font-weight: 700; background: #f3f5f9; color: #3b4252; border-radius: 999px; padding: 0.25rem 0.6rem; }
+    .feature--hero { background: linear-gradient(140deg, #0066cc, #3d8bff); color: #fff; }
+    .feature--hero p { color: rgba(255, 255, 255, 0.82); font-size: 1rem; }
+    .feature--hero h3 { font-size: 1.6rem; }
+    .feature--hero li { background: rgba(255, 255, 255, 0.16); color: #fff; }
+    .feature--hero .feature__icon { background: rgba(255, 255, 255, 0.18); color: #fff; }
+    .emoji-rain { display: flex; gap: 0.5rem; flex-wrap: wrap; font-size: 2rem; margin-top: 1.25rem; }
+    /* Los emojis saltan una sola vez al aparecer la tarjeta, no en bucle: distraer cansa */
+    .emoji-rain span { display: inline-block; }
+    .reveal.is-in .emoji-rain span { animation: hop 700ms var(--ease-out) both; animation-delay: calc(400ms + var(--e, 0) * 60ms); }
+    .emoji-rain span:nth-child(2) { --e: 1; } .emoji-rain span:nth-child(3) { --e: 2; } .emoji-rain span:nth-child(4) { --e: 3; } .emoji-rain span:nth-child(5) { --e: 4; } .emoji-rain span:nth-child(6) { --e: 5; }
+    @keyframes hop { 0% { transform: translateY(8px) scale(0.9); opacity: 0; } 50% { transform: translateY(-8px) scale(1.1); opacity: 1; } 100% { transform: none; opacity: 1; } }
+    .feature--yellow { background: linear-gradient(140deg, #ffe066, #f4c600); color: #1a1400; }
+    .feature--yellow p { color: rgba(26, 20, 0, 0.75); }
+    .feature--yellow li { background: rgba(26, 20, 0, 0.08); color: #1a1400; }
+    .feature--yellow .feature__icon { background: rgba(26, 20, 0, 0.1); color: #1a1400; }
+    .tone-blue { background: rgba(0, 102, 204, 0.1); color: #0066cc; }
+    .tone-yellow { background: rgba(244, 198, 0, 0.18); color: #8a6d00; }
+    .tone-green { background: rgba(34, 197, 94, 0.14); color: #15803d; }
+    .tone-red { background: rgba(239, 68, 68, 0.12); color: #c02626; }
+    .tone-purple { background: rgba(124, 58, 237, 0.12); color: #6d28d9; }
+    .tone-cyan { background: rgba(6, 182, 212, 0.14); color: #0e7490; }
+    .tone-pink { background: rgba(236, 72, 153, 0.12); color: #be185d; }
+    .tone-orange { background: rgba(249, 115, 22, 0.13); color: #c2410c; }
+
+    /* Un día en Workspace */
+    .day { background: linear-gradient(135deg, var(--ws-navy), var(--ws-navy-2)); color: #fff; border-radius: 2rem; padding: clamp(1.75rem, 4vw, 3.5rem); position: relative; overflow: hidden; }
+    .day::after { content: ""; position: absolute; width: 30rem; height: 30rem; right: -10rem; top: -12rem; border-radius: 50%; background: radial-gradient(closest-side, rgba(61, 139, 255, 0.45), transparent); }
+    .day > * { position: relative; z-index: 1; }
+    .moment { display: grid; grid-template-columns: 4.5rem 1fr; gap: 1rem; padding: 1.1rem 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.14); }
+    .moment:last-child { border-bottom: 0; }
+    .moment time { font-weight: 900; font-size: 1.15rem; color: var(--ws-yellow); letter-spacing: -0.02em; }
+    .moment h3 { font-size: 1.02rem; font-weight: 800; margin: 0 0 0.2rem; }
+    .moment p { margin: 0; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; }
+
+    /* Comparativa */
+    .compare { background: #fff; border-radius: 1.75rem; overflow: hidden; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 30px 60px -40px rgba(15, 23, 42, 0.35); }
+    .compare table { margin: 0; }
+    .compare th, .compare td { padding: 1rem 1.25rem; vertical-align: middle; font-size: 0.92rem; border-color: #eef0f5; }
+    .compare thead th { font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ws-muted); background: #fafbfd; }
+    .compare .col-ws { background: rgba(0, 102, 204, 0.05); font-weight: 700; }
+    .compare thead .col-ws { background: var(--ws-blue); color: #fff; }
+    .compare .yes { color: #16a34a; font-size: 1.35rem; vertical-align: -4px; }
+    .compare .no { color: #e11d48; font-size: 1.35rem; vertical-align: -4px; }
+
+    /* Roadmap */
+    .road { height: 100%; background: #fff; border-radius: 1.5rem; padding: 1.4rem; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); display: flex; flex-direction: column; gap: 0.5rem; border: 1px solid transparent; transition: transform 200ms var(--ease-out), border-color 200ms ease; }
+    @media (hover: hover) and (pointer: fine) { .road:hover { transform: translateY(-3px); border-color: rgba(0, 102, 204, 0.25); } }
+    .road .feature__icon { margin: 0 0 0.4rem; }
+    .road h3 { font-size: 1.05rem; font-weight: 800; margin: 0; letter-spacing: -0.015em; }
+    .road p { font-size: 0.88rem; color: var(--ws-muted); margin: 0; }
+    .tag { align-self: flex-start; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; border-radius: 999px; padding: 0.25rem 0.6rem; }
+    .tag--dev { background: rgba(34, 197, 94, 0.14); color: #15803d; }
+    .tag--next { background: rgba(0, 102, 204, 0.1); color: #0066cc; }
+    .tag--plan { background: #f1f2f6; color: #5c6475; }
+    .tag--dev::before { content: "● "; animation: blink 1.4s steps(2) infinite; }
+    @keyframes blink { 50% { opacity: 0.2; } }
+
+    /* Calidad / tecnología */
+    .quality { background: #fff; border-radius: 1.5rem; padding: 1.5rem; height: 100%; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); }
+    .quality strong { display: block; font-size: 2.4rem; font-weight: 900; letter-spacing: -0.04em; line-height: 1; color: var(--ws-blue); }
+    .quality span { font-weight: 700; }
+    .quality p { font-size: 0.85rem; color: var(--ws-muted); margin: 0.35rem 0 0; }
+    .stack { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+    /* Arquitectura: Django → API REST → clientes (hoy la web; mañana React o una app móvil). */
+    .arch { display: grid; gap: 0.75rem; align-items: stretch; }
+    .arch__box { background: #fff; border-radius: 1.5rem; padding: 1.4rem; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); }
+    .arch__box h3 { font-size: 1.05rem; font-weight: 800; margin: 0 0 0.35rem; letter-spacing: -0.015em; }
+    .arch__box p { font-size: 0.9rem; color: var(--ws-muted); margin: 0; }
+    .arch__box ul { margin: 0.8rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .arch__box li { font-size: 0.74rem; font-weight: 700; background: #f3f5f9; color: #3b4252; border-radius: 999px; padding: 0.25rem 0.6rem; }
+    .arch__box--api { background: linear-gradient(140deg, #0066cc, #3d8bff); color: #fff; }
+    .arch__box--api p { color: rgba(255, 255, 255, 0.82); }
+    .arch__box--api li { background: rgba(255, 255, 255, 0.16); color: #fff; }
+    .arch__box--api code { color: var(--ws-yellow); font-weight: 700; }
+    .arch__arrow { display: flex; align-items: center; justify-content: center; font-size: 1.75rem; color: var(--ws-blue); transform: rotate(90deg); }
+    .arch__clients { display: grid; gap: 0.75rem; }
+    .arch__client { display: flex; align-items: center; gap: 0.85rem; background: #fff; border-radius: 1.25rem; padding: 0.9rem 1rem; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); }
+    .arch__client .feature__icon { margin: 0; width: 2.5rem; height: 2.5rem; font-size: 1.25rem; flex: none; }
+    .arch__client strong { display: block; font-size: 0.95rem; }
+    .arch__client small { color: var(--ws-muted); }
+    .arch__client .tag { margin-left: auto; align-self: center; }
+    @media (min-width: 992px) {
+      .arch { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1.1fr); align-items: center; }
+      .arch__arrow { transform: none; }
+    }
+    .stack span { display: inline-flex; align-items: center; gap: 0.45rem; background: #fff; border-radius: 999px; padding: 0.55rem 1rem; font-weight: 600; font-size: 0.9rem; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); }
+    .stack i { font-size: 1.2rem; color: var(--bs-primary); }
+
+    /* FAQ: la respuesta entra suave desde arriba; cerrar es instantáneo */
+    .faq details { background: #fff; border-radius: 1.25rem; padding: 0 1.4rem; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); margin-bottom: 0.75rem; }
+    .faq summary { list-style: none; cursor: pointer; padding: 1.15rem 0; font-weight: 700; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary i { font-size: 1.4rem; color: var(--ws-blue); transition: transform 200ms var(--ease-out); flex: none; }
+    .faq details[open] summary i { transform: rotate(45deg); }
+    .faq details p { color: var(--ws-muted); padding-bottom: 1.15rem; margin: 0; font-size: 0.95rem; }
+    .faq details[open] p { transition: opacity 220ms ease, transform 220ms var(--ease-out); }
+    @starting-style { .faq details[open] p { opacity: 0; transform: translateY(-4px); } }
+    .faq summary:active i { transform: scale(0.9); }
+    .faq details[open] summary:active i { transform: rotate(45deg) scale(0.9); }
+
+    /* CTA final */
+    .cta { background: radial-gradient(40rem 25rem at 85% 10%, rgba(244, 198, 0, 0.3), transparent 60%), linear-gradient(135deg, #0066cc, #0a3f8f); color: #fff; border-radius: 2.25rem; padding: clamp(2.5rem, 6vw, 5rem); text-align: center; position: relative; overflow: hidden; }
+    .cta h2 { font-weight: 900; letter-spacing: -0.045em; font-size: clamp(2.1rem, 5vw, 3.6rem); line-height: 1.02; }
+    .cta p { color: rgba(255, 255, 255, 0.8); font-size: 1.1rem; }
+
+    footer { background: var(--ws-navy); color: rgba(255, 255, 255, 0.6); }
+    footer a { color: #9cc7ff; }
+
+    /* ---------- Entradas ---------- */
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity 650ms var(--ease-out), transform 650ms var(--ease-out); transition-delay: calc(var(--i, 0) * 60ms); }
+    .reveal.is-in { opacity: 1; transform: none; }
+    .phone-enter { opacity: 0; transform: translateY(24px) scale(0.97); transition: opacity 800ms var(--ease-out), transform 900ms var(--ease-out); transition-delay: 150ms; }
+    .phone-enter.is-in { opacity: 1; transform: none; }
+    .hero-title .swash::after { transform: scaleX(0); transition: transform 700ms var(--ease-in-out) 450ms; }
+    .hero-title.is-in .swash::after { transform: scaleX(1); }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .phone-enter { transform: none; transition: opacity 300ms ease; transition-delay: 0ms; }
+      .hero-title .swash::after { transform: none; transition: none; }
+      .feature, .road, .btn, .tour button { transition: background-color 150ms ease, color 150ms ease; }
+      .btn:active, .tour button:active { transform: none; }
+      .float-chip, .emoji-rain span, .marquee__track, .eyebrow .dot, .tag--dev::before { animation: none; }
+      .spinner { animation-duration: 1.2s; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="promo">🎉 Nuevo: reacciones con 134 emojis animados · <a href="#top">Pruébalo en vivo aquí mismo</a></div>
+
+  <nav class="site-nav sticky-top">
+    <div class="container d-flex align-items-center justify-content-between py-3">
+      <a class="brand d-inline-flex align-items-center gap-1 fs-4" href="#top"><i class="bx bxl-xing fs-2"></i> Workspace</a>
+      <div class="d-none d-lg-flex align-items-center gap-1">
+        <a class="nav-link-ws" href="#por-que">Por qué</a>
+        <a class="nav-link-ws" href="#funciones">Funciones</a>
+        <a class="nav-link-ws" href="#roadmap">Lo que viene</a>
+        <a class="nav-link-ws" href="#api">Arquitectura</a>
+        <a class="nav-link-ws" href="#faq">FAQ</a>
+      </div>
+      <a class="btn btn-primary rounded-pill px-3" data-app-link target="_blank" rel="noopener">Entrar a Workspace <i class="bx bx-right-arrow-alt align-middle"></i></a>
+    </div>
+  </nav>
+
+  <!-- ===================== Hero ===================== -->
+  <header id="top" class="hero">
+    <div class="container pt-5 pb-5">
+      <div class="row align-items-center g-5 pb-4">
+        <div class="col-lg-6">
+          <span class="eyebrow reveal" style="--i:0"><span class="dot"></span> La intranet que no se siente como trabajo</span>
+          <h1 class="hero-title mt-4 mb-4 reveal" style="--i:1" data-hero-title>
+            Tu empresa, en un lugar donde <span class="grad">dan ganas</span> de <span class="swash">estar.</span>
+          </h1>
+          <p class="hero-lead mb-4 reveal" style="--i:2">
+            <strong>Workspace</strong> es nuestra red social interna: anuncios importantes, logros, cumpleaños,
+            el chisme sano de la oficina y todo lo que pasa en la empresa, en una app que se abre <strong>por gusto</strong>, no por obligación.
+          </p>
+          <div class="checks mb-4 reveal" style="--i:3">
+            <span><i class="bx bxs-check-circle"></i> Sin instalar nada</span>
+            <span><i class="bx bxs-check-circle"></i> Móvil primero</span>
+            <span><i class="bx bxs-check-circle"></i> Hecha en casa</span>
+          </div>
+          <div class="d-flex flex-wrap gap-2 mb-5 reveal" style="--i:4">
+            <a class="btn btn-primary btn-lg rounded-pill px-4" data-app-link target="_blank" rel="noopener"><i class="bx bx-play-circle align-middle me-1"></i> Ver demo en vivo</a>
+            <a class="btn btn-soft btn-lg rounded-pill px-4" href="#funciones">Descubre todo lo que hace</a>
+          </div>
+          <div class="row g-2 g-sm-3 mb-5 reveal" style="--i:5">
+            <div class="col-4"><div class="stat"><strong>6</strong><span>módulos listos hoy</span></div></div>
+            <div class="col-4"><div class="stat"><strong>134</strong><span>emojis animados</span></div></div>
+            <div class="col-4"><div class="stat"><strong>230</strong><span>pruebas automáticas</span></div></div>
+          </div>
+          <div class="d-flex align-items-center gap-4 reveal" style="--i:6">
+            <div class="qr-box" data-qr aria-label="Código QR de la demo"></div>
+            <div>
+              <h2 class="h5 fw-bold mb-1">Llévala en tu bolsillo</h2>
+              <p class="small mb-1 text-muted-ws">Escanea y pruébala en tu teléfono, o úsala en el de al lado. Es la app real, no un video.</p>
+              <code class="small" data-app-label></code>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="phone-stage phone-enter" data-phone-enter>
+            <div class="phone-wrap" data-phone-wrap>
+              <div class="phone" role="group" aria-label="Workspace en un iPhone">
+                <span class="phone__btn phone__btn--action"></span>
+                <span class="phone__btn phone__btn--vol-up"></span>
+                <span class="phone__btn phone__btn--vol-down"></span>
+                <span class="phone__btn phone__btn--power"></span>
+                <span class="phone__btn phone__btn--camera"></span>
+                <div class="phone__screen">
+                  <div class="phone__island"></div>
+                  <div class="phone__status" aria-hidden="true">
+                    <span data-clock>9:41</span>
+                    <span class="icons"><i class="bx bx-signal-5"></i><i class="bx bx-wifi"></i><i class="bx bxs-battery-full"></i></span>
+                  </div>
+                  <iframe class="phone__frame" data-frame title="Workspace (demo en vivo)" loading="eager"></iframe>
+                  <div class="phone__state" data-state="loading">
+                    <div class="spinner" role="status" aria-label="Cargando la demo"></div>
+                    <p class="fw-semibold text-muted-ws mb-0">Abriendo Workspace…</p>
+                  </div>
+                  <div class="phone__state" data-state="offline" hidden>
+                    <i class="bx bx-plug"></i>
+                    <h3 class="h5 fw-bold mb-0">La app no responde</h3>
+                    <p class="text-muted-ws mb-1">Inicia el servidor del proyecto y vuelve a intentar:</p>
+                    <code>python manage.py runserver</code>
+                    <button type="button" class="btn btn-primary rounded-pill px-4 mt-2" data-retry>Reintentar</button>
+                  </div>
+                  <!-- Abierta con doble clic (file://) o desde otro sitio: el navegador no le pasa las cookies
+                       al iframe y Django rechaza el inicio de sesión (CSRF). Se explica en lugar del error. -->
+                  <div class="phone__state" data-state="cross-site" hidden>
+                    <i class="bx bx-lock-alt"></i>
+                    <h3 class="h5 fw-bold mb-0">Ábrela desde un servidor</h3>
+                    <p class="text-muted-ws mb-1" data-cross-site-text>Abierta como archivo, el navegador no le pasa la sesión a este teléfono y el inicio de sesión falla. Sírvela en la misma computadora:</p>
+                    <code>python -m http.server 5500 --bind 127.0.0.1</code>
+                    <p class="text-muted-ws small mb-1 mt-1">y entra a <strong data-cross-site-url>http://localhost:5500/showcase.html</strong></p>
+                    <a class="btn btn-primary rounded-pill px-4 mt-2" data-app-link target="_blank" rel="noopener">Abrir la app en otra pestaña</a>
+                  </div>
+                  <div class="phone__home"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex flex-column align-items-center gap-3 mt-4">
+            <div class="tour" role="group" aria-label="Elegir pantalla">
+              <button type="button" data-path="/" aria-pressed="true"><i class="bx bx-home-alt-2"></i> Inicio</button>
+              <button type="button" data-path="/notifications/" aria-pressed="false"><i class="bx bx-bell"></i> Avisos</button>
+              <button type="button" data-path="/people/" aria-pressed="false"><i class="bx bx-group"></i> Personas</button>
+              <button type="button" data-path="/profile/" aria-pressed="false"><i class="bx bx-user"></i> Perfil</button>
+            </div>
+            <div class="phone-tools">
+              <button type="button" class="btn btn-soft icon-btn" data-reload aria-label="Recargar la demo" title="Recargar"><i class="bx bx-refresh"></i></button>
+              <a class="btn btn-soft icon-btn" data-app-link target="_blank" rel="noopener" aria-label="Abrir en otra pestaña" title="Abrir en otra pestaña"><i class="bx bx-link-external"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>Publicaciones</span><span>Reacciones animadas</span><span>Comentarios</span><span>Avisos</span><span>Perfiles</span><span>Directorio</span><span>Noticias</span><span>Formularios</span><span>Marketplace</span><span>Cursos</span><span>Organigrama</span><span>Buscador</span><span>PWA</span>
+      <span>Publicaciones</span><span>Reacciones animadas</span><span>Comentarios</span><span>Avisos</span><span>Perfiles</span><span>Directorio</span><span>Noticias</span><span>Formularios</span><span>Marketplace</span><span>Cursos</span><span>Organigrama</span><span>Buscador</span><span>PWA</span>
+    </div>
+  </div>
+
+  <!-- ===================== Por qué ===================== -->
+  <section id="por-que" class="section">
+    <div class="container">
+      <div class="text-center mx-auto mb-5" style="max-width: 48rem;">
+        <span class="section-kicker reveal"><i class="bx bx-bulb"></i> El problema</span>
+        <h2 class="section-title mt-3 reveal" style="--i:1">Las intranets de siempre <span class="hl">nadie las abre.</span></h2>
+        <p class="text-muted-ws mt-3 fs-5 reveal" style="--i:2">Los avisos se pierden en el correo, lo importante vive en cinco grupos de WhatsApp y nadie sabe quién es quién. Workspace lo junta todo en un solo lugar… y lo hace divertido.</p>
+      </div>
+      <div class="row g-3 g-lg-4">
+        <div class="col-md-4 reveal" style="--i:0"><div class="pain">
+          <span class="emoji">📭</span>
+          <div class="pain__before">“Nadie leyó el correo del comunicado.”</div>
+          <h3>Avisos que sí se ven</h3>
+          <p>Los anuncios llegan al muro y a la campana, con color e ícono. Imposible que se pierdan entre 200 correos.</p>
+        </div></div>
+        <div class="col-md-4 reveal" style="--i:1"><div class="pain">
+          <span class="emoji">💬</span>
+          <div class="pain__before">“Me enteré por el grupo de WhatsApp.”</div>
+          <h3>Un solo lugar oficial</h3>
+          <p>Logros, cumpleaños, fotos del evento y la plática de pasillo, dentro de la empresa y sin mezclarlo con lo personal.</p>
+        </div></div>
+        <div class="col-md-4 reveal" style="--i:2"><div class="pain">
+          <span class="emoji">🤷</span>
+          <div class="pain__before">“¿Y quién es el de sistemas?”</div>
+          <h3>Conoce a tu equipo</h3>
+          <p>Perfiles con foto, cargo y área, un directorio que se busca en segundos y la opción de seguir a quien te inspira.</p>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Funciones ===================== -->
+  <section id="funciones" class="section pt-0">
+    <div class="container">
+      <div class="text-center mx-auto mb-5" style="max-width: 46rem;">
+        <span class="section-kicker reveal"><i class="bx bx-check-shield"></i> Disponible hoy</span>
+        <h2 class="section-title mt-3 reveal" style="--i:1">Todo lo que tu equipo necesita para <span class="hl">enterarse de todo.</span></h2>
+        <p class="text-muted-ws mt-3 reveal" style="--i:2">Nada de maquetas: esto ya funciona de punta a punta, con su API, sus pruebas y su diseño móvil. Lo que ves en el teléfono de arriba es la app real.</p>
+      </div>
+      <div class="row g-3 g-lg-4">
+        <div class="col-lg-8 reveal" style="--i:0"><article class="feature feature--hero">
+          <span class="feature__icon"><i class="bx bx-news"></i></span>
+          <h3>Un muro que se siente como tu red social favorita</h3>
+          <p>Publica texto, fotos y videos para toda la empresa o solo para tus seguidores. Scroll infinito, edición, y cero curva de aprendizaje: si sabes usar Instagram, ya sabes usar Workspace.</p>
+          <ul><li>Hasta 10 archivos por post</li><li>Fotos optimizadas a WebP</li><li>Scroll infinito</li><li>Público o solo seguidores</li></ul>
+        </article></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:1"><article class="feature feature--yellow">
+          <span class="feature__icon"><i class="bx bx-happy-heart-eyes"></i></span>
+          <h3>Reacciones que cobran vida</h3>
+          <p>134 emojis animados, en pastillas compactas al estilo Discord. Un aplauso nunca se vio tan bien.</p>
+          <div class="emoji-rain" aria-hidden="true"><span>🎉</span><span>😂</span><span>🔥</span><span>❤️</span><span>👏</span><span>🤯</span></div>
+        </article></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:2"><article class="feature">
+          <span class="feature__icon tone-green"><i class="bx bx-conversation"></i></span>
+          <h3>Comentarios y respuestas</h3>
+          <p>Conversaciones con respuestas, reacciones, edición y un borrado que no rompe el hilo.</p>
+          <ul><li>Hilos</li><li>Reacciones</li><li>Borrado suave</li></ul>
+        </article></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:3"><article class="feature">
+          <span class="feature__icon tone-purple"><i class="bx bx-id-card"></i></span>
+          <h3>Perfiles con personalidad</h3>
+          <p>Foto, presentación, cargo y área, con pestañas de publicaciones, fotos, información y seguidores, al estilo Facebook.</p>
+          <ul><li>Galería</li><li>Información</li></ul>
+        </article></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:4"><article class="feature">
+          <span class="feature__icon tone-cyan"><i class="bx bx-group"></i></span>
+          <h3>Directorio de personas</h3>
+          <p>Encuentra a cualquiera por nombre y llega a su perfil en un toque. Adiós a preguntar “¿quién lleva esto?”.</p>
+          <ul><li>Búsqueda</li><li>Seguir desde la lista</li></ul>
+        </article></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:5"><article class="feature">
+          <span class="feature__icon tone-red"><i class="bx bx-user-plus"></i></span>
+          <h3>Sigue a quien te inspira</h3>
+          <p>Seguir es inmediato, sin solicitudes. Publica algo solo para tus seguidores y descubre a «personas que quizás conozcas».</p>
+          <ul><li>Seguidores y seguidos</li><li>Solo seguidores</li><li>Sugerencias</li></ul>
+        </article></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:6"><article class="feature">
+          <span class="feature__icon tone-green"><i class="bx bx-shield-quarter"></i></span>
+          <h3>Privacidad de verdad</h3>
+          <p>Cada archivo se valida por su contenido real, se le quitan los datos GPS y solo lo ve quien tiene permiso.</p>
+          <ul><li>Sin metadatos</li><li>Entrega autorizada</li></ul>
+        </article></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:7"><article class="feature">
+          <span class="feature__icon tone-blue"><i class="bx bx-code-curly"></i></span>
+          <h3>API primero</h3>
+          <p>Todo pasa por una API REST segura. Conéctala con tus sistemas o cambia el frontend sin tocar los datos. <a href="#api">Así funciona</a>.</p>
+          <ul><li>Django REST</li><li>Lista para React</li></ul>
+        </article></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:8"><article class="feature">
+          <span class="feature__icon tone-yellow"><i class="bx bx-mobile-alt"></i></span>
+          <h3>Se siente nativa</h3>
+          <p>Barra inferior, gestos y animaciones cuidadas. Respeta “reducir movimiento” y es accesible.</p>
+          <ul><li>Móvil primero</li><li>Accesible</li></ul>
+        </article></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Un día en Workspace ===================== -->
+  <section class="section pt-0">
+    <div class="container">
+      <div class="day reveal">
+        <div class="row g-5 align-items-center">
+          <div class="col-lg-5">
+            <span class="section-kicker section-kicker--dark"><i class="bx bx-coffee"></i> Un día cualquiera</span>
+            <h2 class="section-title mt-3 mb-3">No es trabajo. Es <span class="text-yellow">tu break favorito.</span></h2>
+            <p style="color: rgba(255,255,255,0.72);" class="mb-0">Workspace está pensado para esos cinco minutos con el café en la mano: te distraes un rato, te ríes con tus compañeros… y sin darte cuenta, ya estás enterado de todo lo que pasa en la empresa.</p>
+          </div>
+          <div class="col-lg-7">
+            <div class="moment"><time>9:02</time><div><h3>☕ Café y novedades</h3><p>Abres la app y ves la publicación de la junta general y la foto del nuevo integrante del equipo.</p></div></div>
+            <div class="moment"><time>11:30</time><div><h3>🎂 Cumpleaños en el muro</h3><p>Toda el área llena de 🎉 la publicación de Ana. Tú también le dejas un comentario.</p></div></div>
+            <div class="moment"><time>14:15</time><div><h3>🔎 ¿Quién sabe de esto?</h3><p>Buscas en el directorio, encuentras a la persona de compras y la sigues para no perderle la pista.</p></div></div>
+            <div class="moment"><time>17:45</time><div><h3>🍕 El chisme del viernes</h3><p>RH confirma la pizza en el muro y medio edificio reacciona con 😍 en segundos.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Comparativa ===================== -->
+  <section class="section pt-0">
+    <div class="container">
+      <div class="text-center mx-auto mb-5" style="max-width: 44rem;">
+        <span class="section-kicker reveal"><i class="bx bx-git-compare"></i> Compara</span>
+        <h2 class="section-title mt-3 reveal" style="--i:1">Workspace vs. la intranet de siempre</h2>
+      </div>
+      <div class="compare reveal">
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead><tr><th>Lo que importa</th><th class="text-center">Intranet tradicional</th><th class="text-center col-ws">Workspace</th></tr></thead>
+            <tbody>
+              <tr><td>Tu equipo la abre por gusto</td><td class="text-center"><i class="bx bx-x-circle no"></i></td><td class="text-center col-ws"><i class="bx bxs-check-circle yes"></i></td></tr>
+              <tr><td>Diseñada para el celular</td><td class="text-center"><i class="bx bx-x-circle no"></i></td><td class="text-center col-ws"><i class="bx bxs-check-circle yes"></i></td></tr>
+              <tr><td>Reacciones, comentarios y seguidores</td><td class="text-center"><i class="bx bx-x-circle no"></i></td><td class="text-center col-ws"><i class="bx bxs-check-circle yes"></i></td></tr>
+              <tr><td>Sin instalar nada (y pronto instalable como app)</td><td class="text-center"><i class="bx bx-x-circle no"></i></td><td class="text-center col-ws"><i class="bx bxs-check-circle yes"></i></td></tr>
+              <tr><td>API abierta para integrarse con tus sistemas</td><td class="text-center text-muted-ws small fw-semibold">A veces</td><td class="text-center col-ws"><i class="bx bxs-check-circle yes"></i></td></tr>
+              <tr><td>Tus datos en tu propio servidor</td><td class="text-center text-muted-ws small fw-semibold">Depende</td><td class="text-center col-ws"><i class="bx bxs-check-circle yes"></i></td></tr>
+              <tr><td>Crece por módulos según lo que necesites</td><td class="text-center"><i class="bx bx-x-circle no"></i></td><td class="text-center col-ws"><i class="bx bxs-check-circle yes"></i></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Roadmap ===================== -->
+  <section id="roadmap" class="section pt-0">
+    <div class="container">
+      <div class="text-center mx-auto mb-5" style="max-width: 46rem;">
+        <span class="section-kicker reveal"><i class="bx bx-rocket"></i> Lo que viene</span>
+        <h2 class="section-title mt-3 reveal" style="--i:1">Esto apenas <span class="hl">empieza.</span></h2>
+        <p class="text-muted-ws mt-3 reveal" style="--i:2">Workspace crece por tandas: cada entrega llega completa, probada y documentada. Varios módulos ya tienen su base (modelos, API y su lugar en el menú) y ahora estamos construyendo su interfaz.</p>
+      </div>
+      <div class="row g-3 g-lg-4">
+        <div class="col-md-6 col-lg-4 reveal" style="--i:0"><div class="road"><span class="feature__icon tone-blue"><i class="bx bx-book-content"></i></span><span class="tag tag--dev">En desarrollo</span><h3>Noticias y blogs</h3><p>Artículos con portada, categorías, reacciones animadas y comentarios. Modelos y API listos; estamos terminando la interfaz.</p></div></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:1"><div class="road"><span class="feature__icon tone-green"><i class="bx bx-spreadsheet"></i></span><span class="tag tag--dev">En desarrollo</span><h3>Formularios tipo Google Forms</h3><p>Preguntas abiertas, de opción múltiple, casillas, escalas y cuadrículas, con resultados en gráficas. El modelo ya está listo.</p></div></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:2"><div class="road"><span class="feature__icon tone-purple"><i class="bx bx-file"></i></span><span class="tag tag--dev">En desarrollo</span><h3>Documentos y versiones</h3><p>Políticas, manuales y formatos siempre en su última versión, con historial para saber qué cambió y cuándo.</p></div></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:3"><div class="road"><span class="feature__icon tone-yellow"><i class="bx bx-store-alt"></i></span><span class="tag tag--dev">En desarrollo</span><h3>Marketplace interno</h3><p>Compra, vende o regala entre compañeros: desde la bici que ya no usas hasta boletos para el concierto. Modelos y API listos.</p></div></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:4"><div class="road"><span class="feature__icon tone-red"><i class="bx bx-bell-plus"></i></span><span class="tag tag--dev">En desarrollo</span><h3>Avisos en vivo</h3><p>La bandeja de avisos ya existe. Falta que se generen solos cuando reaccionan, comentan o te siguen, con contador en la campana.</p></div></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:5"><div class="road"><span class="feature__icon tone-orange"><i class="bx bx-calendar"></i></span><span class="tag tag--dev">En desarrollo</span><h3>Calendario</h3><p>Vista de mes, semana y agenda ya lista. Pronto mostrará eventos, cumpleaños y fechas importantes de la empresa.</p></div></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:6"><div class="road"><span class="feature__icon tone-blue"><i class="bx bx-search-alt"></i></span><span class="tag tag--next">Siguiente</span><h3>Buscador universal</h3><p>Hoy ya encuentra personas. Después: publicaciones, noticias, documentos y formularios desde un solo lugar.</p></div></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:7"><div class="road"><span class="feature__icon tone-cyan"><i class="bx bx-sitemap"></i></span><span class="tag tag--plan">Planeado</span><h3>Organigrama interactivo</h3><p>Quién es jefe de quién: navega por áreas y llega al perfil de cada persona en un toque.</p></div></div>
+        <div class="col-md-6 col-lg-4 reveal" style="--i:8"><div class="road"><span class="feature__icon tone-pink"><i class="bx bx-play-circle"></i></span><span class="tag tag--plan">Planeado</span><h3>Cursos tipo Udemy</h3><p>Capacitación con lecciones en video, progreso por persona y certificados. Tu propia academia interna.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Arquitectura: hecha en Django, lista para migrar a React (API primero) ===================== -->
+  <section id="api" class="section pt-0">
+    <div class="container">
+      <div class="text-center mx-auto mb-5" style="max-width: 48rem;">
+        <span class="section-kicker reveal"><i class="bx bx-git-branch"></i> Arquitectura</span>
+        <h2 class="section-title mt-3 reveal" style="--i:1">Hecha en Django. <span class="hl">Lista para React</span> si algún día se necesita.</h2>
+        <p class="text-muted-ws mt-3 reveal" style="--i:2">Workspace funciona con Django de principio a fin. Aun así, los datos nunca viven en el HTML: cada publicación, perfil, reacción o seguidor viaja por la API REST. Si en el futuro se quiere un frontend en React o una app móvil, la migración es posible sin dificultad: usarían la misma API, sin reescribir el backend ni migrar datos.</p>
+      </div>
+      <div class="arch reveal" style="--i:3">
+        <div class="arch__box">
+          <span class="feature__icon tone-green"><i class="bx bxl-python"></i></span>
+          <h3>Django · el cerebro</h3>
+          <p>Modelos, reglas de negocio, permisos y validación de archivos. Un solo lugar para toda la lógica.</p>
+          <ul><li>Servicios</li><li>Permisos</li><li>Pruebas</li></ul>
+        </div>
+        <div class="arch__arrow" aria-hidden="true"><i class="bx bx-right-arrow-alt"></i></div>
+        <div class="arch__box arch__box--api">
+          <span class="feature__icon" style="background: rgba(255,255,255,0.16); color: #fff;"><i class="bx bx-code-curly"></i></span>
+          <h3>API REST · <code>/api/</code></h3>
+          <p>JSON para todo: el muro, los perfiles, los seguidores, el directorio. La web de hoy ya la usa.</p>
+          <ul><li>Django REST Framework</li><li>Sesión + CSRF hoy</li><li>JWT ya instalado</li></ul>
+        </div>
+        <div class="arch__arrow" aria-hidden="true"><i class="bx bx-right-arrow-alt"></i></div>
+        <div class="arch__clients">
+          <div class="arch__client"><span class="feature__icon tone-blue"><i class="bx bx-globe"></i></span><span><strong>Web actual</strong><small>Django + Bootstrap + jQuery</small></span><span class="tag tag--dev">Hoy</span></div>
+          <div class="arch__client"><span class="feature__icon tone-cyan"><i class="bx bxl-react"></i></span><span><strong>React</strong><small>La misma API, otra interfaz</small></span><span class="tag tag--plan">A futuro</span></div>
+          <div class="arch__client"><span class="feature__icon tone-purple"><i class="bx bx-mobile-alt"></i></span><span><strong>App móvil</strong><small>iOS o Android con la misma API</small></span><span class="tag tag--plan">A futuro</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Calidad y tecnología ===================== -->
+  <section id="tecnologia" class="section pt-0">
+    <div class="container">
+      <div class="text-center mx-auto mb-5" style="max-width: 44rem;">
+        <span class="section-kicker reveal"><i class="bx bx-chip"></i> Hecha para durar</span>
+        <h2 class="section-title mt-3 reveal" style="--i:1">Bonita por fuera, <span class="hl">sólida por dentro.</span></h2>
+      </div>
+      <div class="row g-3 g-lg-4 mb-5">
+        <div class="col-6 col-lg-3 reveal" style="--i:0"><div class="quality"><strong>230</strong><span>pruebas automáticas</span><p>Cada cambio se verifica antes de llegar a tu equipo.</p></div></div>
+        <div class="col-6 col-lg-3 reveal" style="--i:1"><div class="quality"><strong>100%</strong><span>vía API REST</span><p>Sesión y CSRF en cada petición. Integrable con todo.</p></div></div>
+        <div class="col-6 col-lg-3 reveal" style="--i:2"><div class="quality"><strong>0</strong><span>datos GPS en fotos</span><p>Los metadatos se limpian al subir. Privacidad por defecto.</p></div></div>
+        <div class="col-6 col-lg-3 reveal" style="--i:3"><div class="quality"><strong>1</strong><span>casa: la nuestra</span><p>Hecha a la medida de la empresa, en nuestro propio servidor.</p></div></div>
+      </div>
+      <div class="stack reveal">
+        <span><i class="bx bxl-python"></i> Django 5.2</span>
+        <span><i class="bx bx-code-curly"></i> Django REST Framework</span>
+        <span><i class="bx bxl-bootstrap"></i> Bootstrap 5.3</span>
+        <span><i class="bx bxl-jquery"></i> jQuery</span>
+        <span><i class="bx bx-time-five"></i> Day.js</span>
+        <span><i class="bx bx-happy"></i> Noto Animated Emoji</span>
+        <span><i class="bx bx-shield"></i> nh3</span>
+        <span><i class="bx bx-key"></i> SimpleJWT</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section id="faq" class="section pt-0">
+    <div class="container" style="max-width: 52rem;">
+      <div class="text-center mb-5">
+        <span class="section-kicker reveal"><i class="bx bx-help-circle"></i> Preguntas frecuentes</span>
+        <h2 class="section-title mt-3 reveal" style="--i:1">¿Dudas? Las resolvemos.</h2>
+      </div>
+      <div class="faq reveal">
+        <details open><summary>¿Tengo que instalar algo? <i class="bx bx-plus"></i></summary><p>No. Workspace se abre desde el navegador del celular o la computadora y se siente como una app. Con la versión PWA además podrás agregarla a tu pantalla de inicio.</p></details>
+        <details><summary>¿Es algo oficial o solo para distraerse? <i class="bx bx-plus"></i></summary><p>Las dos cosas. Aquí llegan los anuncios importantes de la empresa, y también los cumpleaños, las fotos del evento y la plática de pasillo. Te distraes un rato y sales enterado de todo.</p></details>
+        <details><summary>¿Quién ve lo que publico? <i class="bx bx-plus"></i></summary><p>Tú decides: toda la empresa o solo tus seguidores. Y tus fotos y videos solo los ve quien tiene permiso.</p></details>
+        <details><summary>¿Mis datos están seguros? <i class="bx bx-plus"></i></summary><p>Todo vive en el servidor de la empresa. Cada archivo se valida al subir y a las fotos se les quitan los datos de ubicación.</p></details>
+        <details><summary>¿Se puede pasar a React o a una app móvil? <i class="bx bx-plus"></i></summary><p>Hoy Workspace es 100% Django y así funciona perfecto. Si algún día se decide, sí: todo pasa por la API REST, así que un frontend en React o una app móvil podrían usar los mismos datos y reglas sin rehacer el backend. La autenticación con tokens (JWT) ya está instalada para ese momento.</p></details>
+        <details><summary>¿Cuándo llegan las novedades? <i class="bx bx-plus"></i></summary><p>Workspace crece por tandas. Cada entrega llega completa y probada. Noticias, formularios, documentos, marketplace, avisos en vivo y calendario ya están en desarrollo; después vienen el buscador completo, el organigrama, los cursos… y lo que vaya pidiendo el equipo.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA final ===================== -->
+  <section id="contacto" class="section pt-0">
+    <div class="container">
+      <div class="cta reveal">
+        <div style="font-size: 2.5rem;" class="mb-3">🚀</div>
+        <h2 class="mb-3">Un lugar al que<br class="d-none d-md-inline"> dan ganas de volver.</h2>
+        <p class="mx-auto mb-4" style="max-width: 36rem;">Entra, saluda, reacciona y entérate de todo. En cinco minutos vas a entender por qué no la vas a querer soltar.</p>
+        <div class="d-flex flex-wrap gap-2 justify-content-center">
+          <a class="btn btn-yellow btn-lg rounded-pill px-4" data-app-link target="_blank" rel="noopener"><i class="bx bx-log-in-circle align-middle me-1"></i> Entrar a Workspace</a>
+          <a class="btn btn-glass btn-lg rounded-pill px-4" href="#top"><i class="bx bx-mobile align-middle me-1"></i> Ver en el teléfono</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-4">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2 small">
+      <span class="d-inline-flex align-items-center gap-1 fw-bold text-white"><i class="bx bxl-xing fs-5" style="color: var(--ws-yellow);"></i> Workspace · La intranet que no se siente como trabajo</span>
+      <span>Demo: <a data-app-link data-app-label target="_blank" rel="noopener"></a></span>
+    </div>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    /* ---- Configuración: dirección fija de la app (o ?app=https://...). Vacía = la de esta página ---- */
+    var APP_URL = "http://192.168.1.118:8000/";
+
+    (function ($) {
+      "use strict";
+      // Sin APP_URL: servida por Django (/showcase/) la app es este mismo origen; servida aparte
+      // (http.server en otro puerto), el mismo host en el puerto 8000.
+      var servedByDjango = /^\/showcase\/?$/.test(location.pathname);
+      var appUrl = APP_URL || (servedByDjango ? location.origin + "/" : location.protocol + "//" + location.hostname + ":8000/");
+      try {
+        var override = new URLSearchParams(location.search).get("app");
+        if (override && /^https?:\/\//.test(override)) { appUrl = override; }
+      } catch (e) { /* navegador antiguo: se usa APP_URL */ }
+      var origin = new URL(appUrl).origin;
+
+      var $frame = $("[data-frame]");
+      var $loading = $('[data-state="loading"]');
+      var $offline = $('[data-state="offline"]');
+      var $crossSite = $('[data-state="cross-site"]');
+      var currentPath = "/";
+
+      // ¿La presentación y la app son el «mismo sitio»? Si no (file://, 127.0.0.1 vs localhost, otro
+      // dominio), las cookies de sesión no viajan al iframe y no se puede iniciar sesión dentro.
+      function sameSite(a, b) {
+        if (a === b) { return true; }
+        var plain = /^(localhost|\d+\.\d+\.\d+\.\d+|\[.*\])$/;
+        if (plain.test(a) || plain.test(b)) { return false; }
+        return a.split(".").slice(-2).join(".") === b.split(".").slice(-2).join(".");
+      }
+      var appHost = new URL(appUrl).hostname;
+      var asFile = !/^https?:$/.test(location.protocol);   // file:// (doble clic) u otra vista local
+      var crossSite = asFile || !sameSite(location.hostname, appHost);
+      if (crossSite && !asFile) {
+        $("[data-cross-site-text]").text("Esta página (" + location.hostname + ") y la app (" + appHost + ") son sitios distintos: el navegador no le pasa la sesión a este teléfono. Ábrela desde el mismo sitio que la app:");
+        $("[data-cross-site-url]").text(location.protocol + "//" + appHost + (location.port ? ":" + location.port : "") + location.pathname);
+      }
+
+      $("[data-app-link]").attr("href", appUrl);
+      $("[data-app-label]").text(appUrl.replace(/^https?:\/\//, "").replace(/\/$/, ""));
+
+      // QR de la demo
+      if (window.QRCode) {
+        new QRCode($("[data-qr]")[0], { text: appUrl, width: 236, height: 236, colorDark: "#07142a", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+      }
+
+      // Reloj de la barra de estado
+      function tick() {
+        var d = new Date();
+        $("[data-clock]").text(d.getHours() + ":" + String(d.getMinutes()).padStart(2, "0"));
+      }
+      tick();
+      setInterval(tick, 15000);
+
+      // Escala del teléfono: que quepa en la columna y en la altura de la ventana.
+      var $wrap = $("[data-phone-wrap]");
+      function fit() {
+        var col = $wrap.parent().width();
+        var maxH = Math.max(window.innerHeight - 190, 480);
+        var s = Math.min(1, col / 470, maxH / 986, window.innerWidth < 576 ? 0.78 : 1);
+        document.documentElement.style.setProperty("--phone-scale", s.toFixed(3));
+      }
+      fit();
+      $(window).on("resize", fit);
+
+      function showState(name) {
+        $loading.prop("hidden", name !== "loading").removeClass("is-leaving");
+        $offline.prop("hidden", name !== "offline");
+        $crossSite.prop("hidden", name !== "cross-site");
+      }
+
+      function hideLoading() {
+        $loading.addClass("is-leaving");
+        setTimeout(function () { $loading.prop("hidden", true).removeClass("is-leaving"); }, 200);
+      }
+
+      // Antes de cargar se comprueba que el servidor responda (no-cors: solo importa si hay red).
+      function open(path, switching) {
+        currentPath = path;
+        if (crossSite) { showState("cross-site"); return; }
+        if (switching) { $frame.addClass("is-switching"); } else { showState("loading"); }
+        fetch(origin + "/", { mode: "no-cors", cache: "no-store" }).then(function () {
+          $frame.attr("src", new URL(path, appUrl).href);
+        }, function () {
+          $frame.removeClass("is-switching").removeAttr("src");
+          showState("offline");
+        });
+      }
+
+      $frame.on("load", function () {
+        if (!$frame.attr("src")) { return; }
+        $frame.removeClass("is-switching");
+        hideLoading();
+      });
+
+      $(".tour").on("click", "button", function () {
+        var $btn = $(this);
+        if ($btn.attr("aria-pressed") === "true") { return; }
+        $(".tour button").attr("aria-pressed", "false");
+        $btn.attr("aria-pressed", "true");
+        open($btn.attr("data-path"), $offline.prop("hidden"));
+      });
+      $("[data-reload]").on("click", function () { open(currentPath, $offline.prop("hidden")); });
+      $("[data-retry]").on("click", function () { open(currentPath, false); });
+
+      open("/", false);
+
+      // Entradas: se animan una sola vez al aparecer.
+      requestAnimationFrame(function () {
+        $("[data-hero-title], [data-phone-enter]").addClass("is-in");
+      });
+      var items = document.querySelectorAll(".reveal");
+      if ("IntersectionObserver" in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) { entry.target.classList.add("is-in"); io.unobserve(entry.target); }
+          });
+        }, { rootMargin: "0px 0px -60px 0px" });
+        items.forEach(function (el) { io.observe(el); });
+      } else {
+        $(items).addClass("is-in");
+      }
+    })(jQuery);
+  </script>
+</body>
+</html>

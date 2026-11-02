@@ -1,0 +1,16 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Formularios · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{# Formularios. Página en construcción: los modelos (apps.form_builder) ya existen; faltan vistas y API. #}
+<section class="pt-3" aria-labelledby="ws-forms-title">
+  <header class="mb-3">
+    <h1 class="h4 fw-bolder mb-0" id="ws-forms-title">Formularios</h1>
+    <p class="small text-body-secondary mb-0">Solicitudes y encuestas internas.</p>
+  </header>
+  {% include "components/feedback/empty_state.html" with icon="bx-list-check" title="Formularios está en construcción" description="Pronto podrás responder aquí solicitudes y encuestas de la empresa." only %}
+</section>
+{% endblock %}

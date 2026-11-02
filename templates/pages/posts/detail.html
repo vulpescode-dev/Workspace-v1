@@ -1,0 +1,23 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Publicación · Workspace{% endblock %}
+
+{% block content %}
+<section class="pt-3" aria-labelledby="ws-post-detail-title">
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <a class="btn btn-light rounded-circle ws-icon-btn" href="{% url 'social:home' %}" data-ws-back aria-label="Volver"><i class="bx bx-arrow-back fs-5" aria-hidden="true"></i></a>
+    <h1 class="h5 fw-bold mb-0" id="ws-post-detail-title">Publicación</h1>
+  </div>
+  <div data-post-detail{% if open_comments %} data-open-comments{% endif %}{% if highlight_comment %} data-highlight-comment="{{ highlight_comment }}"{% endif %}>
+    {% include "components/posts/feed.html" with empty_title="Esta publicación ya no está disponible" empty_description="Puede que se haya eliminado o que ya no tengas acceso." %}
+  </div>
+</section>
+{% endblock %}
+
+{% block page_modals %}
+  {% include "components/posts/feed_modals.html" with show_composer=False %}
+{% endblock %}
+
+{% block extra_js %}
+  {% include "components/posts/feed_scripts.html" %}
+{% endblock %}

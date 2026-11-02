@@ -1,0 +1,68 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Buscar · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{% comment %}
+Buscar (página propia, como Inicio o Avisos). search.js maneja filtros y envío.
+- Sin widgets: en pantallas grandes ocupa todo el ancho junto al menú (como Personas).
+- Misma jerarquía que las demás páginas: encabezado (título + ayuda) y una tarjeta blanca con el buscador
+  y los filtros subrayados como las pestañas del perfil (Todo · Personas · Documentos · Avisos · Formularios).
+  Cambiar de filtro no se anima (se usa a cada rato): solo cambia el subrayado y el texto de ayuda.
+- La búsqueda general llega en una etapa posterior. Con el filtro «Personas» ya busca de verdad:
+  abre el directorio con lo escrito. Los demás filtros avisan «Próximamente» (nunca un resultado falso).
+{% endcomment %}
+<section class="pt-3" aria-labelledby="ws-search-title">
+  <header class="mb-3">
+    <h1 class="h4 fw-bolder mb-0" id="ws-search-title">Buscar</h1>
+    <p class="small text-body-secondary mb-0">Personas, documentos, avisos y formularios de Workspace.</p>
+  </header>
+
+  <div class="card border-0 shadow-sm rounded-4 mb-4 ws-search-card">
+
+    <form class="ws-search-form" role="search" data-ws-search data-people-url="{% url 'people' %}" novalidate>
+      <label class="visually-hidden" for="ws-search-input">Buscar</label>
+      <i class="bx bx-search fs-4 text-body-secondary ws-search-form__icon" aria-hidden="true"></i>
+      <input type="search" class="form-control ws-search-form__input" id="ws-search-input" name="q" autofocus placeholder="Buscar en todo Workspace..." autocomplete="off" enterkeyhint="search">
+      <button type="submit" class="btn btn-primary rounded-pill fw-semibold px-4 ws-search-form__submit">Buscar</button>
+    </form>
+
+    <div class="ws-search-scopes" role="group" aria-label="Buscar en">
+      <button type="button" class="ws-search-scope is-active" data-ws-search-scope="all" aria-pressed="true" data-placeholder="Buscar en todo Workspace..."><i class="bx bx-search" aria-hidden="true"></i>Todo</button>
+      <button type="button" class="ws-search-scope" data-ws-search-scope="people" aria-pressed="false" data-placeholder="Nombre, correo, cargo o área..."><i class="bx bx-group" aria-hidden="true"></i>Personas</button>
+      <button type="button" class="ws-search-scope" data-ws-search-scope="documents" aria-pressed="false" data-placeholder="Nombre o contenido del documento..." data-soon="La búsqueda de documentos estará disponible próximamente."><i class="bx bx-folder-open" aria-hidden="true"></i>Documentos</button>
+      <button type="button" class="ws-search-scope" data-ws-search-scope="notices" aria-pressed="false" data-placeholder="Título o texto del aviso..." data-soon="La búsqueda de avisos estará disponible próximamente."><i class="bx bx-bell" aria-hidden="true"></i>Avisos</button>
+      <button type="button" class="ws-search-scope" data-ws-search-scope="forms" aria-pressed="false" data-placeholder="Nombre del formulario..." data-soon="La búsqueda de formularios estará disponible próximamente."><i class="bx bx-list-check" aria-hidden="true"></i>Formularios</button>
+    </div>
+  </div>
+
+  <section aria-labelledby="ws-explore-title">
+    <h2 class="h6 fw-bold mb-2" id="ws-explore-title">Explorar</h2>
+    <div class="ws-explore-grid">
+      <a class="ws-explore-card" href="{% url 'people' %}">
+        <span class="ws-explore-card__icon bg-secondary-subtle text-secondary-emphasis"><i class="bx bx-group" aria-hidden="true"></i></span>
+        <span class="min-w-0"><span class="ws-explore-card__title">Personas</span><span class="ws-explore-card__text">Directorio por nombre, cargo o área</span></span>
+      </a>
+      <a class="ws-explore-card" href="{% url 'notifications' %}">
+        <span class="ws-explore-card__icon bg-danger-subtle text-danger-emphasis"><i class="bx bx-bell" aria-hidden="true"></i></span>
+        <span class="min-w-0"><span class="ws-explore-card__title">Avisos</span><span class="ws-explore-card__text">Comunicados y novedades recientes</span></span>
+      </a>
+      <a class="ws-explore-card" href="{% url 'documents' %}">
+        <span class="ws-explore-card__icon bg-primary-subtle text-primary-emphasis"><i class="bx bx-folder-open" aria-hidden="true"></i></span>
+        <span class="min-w-0"><span class="ws-explore-card__title">Documentos</span><span class="ws-explore-card__text">Políticas, formatos y manuales</span></span>
+      </a>
+      <a class="ws-explore-card" href="{% url 'forms' %}">
+        <span class="ws-explore-card__icon bg-success-subtle text-success-emphasis"><i class="bx bx-list-check" aria-hidden="true"></i></span>
+        <span class="min-w-0"><span class="ws-explore-card__title">Formularios</span><span class="ws-explore-card__text">Solicitudes y encuestas internas</span></span>
+      </a>
+    </div>
+  </section>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+  {% load static %}
+  <script src="{% static 'assets/js/search.js' %}" defer></script>
+{% endblock %}

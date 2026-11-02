@@ -1,0 +1,16 @@
+{# Plantillas de media que clona el JS. Imagen/video del post (feed.js) y miniatura del composer (feed.js). #}
+<template id="ws-media-image-template">
+  <div class="ws-post-media__item"><img src="" alt="Imagen de la publicación" loading="lazy" decoding="async"></div>
+</template>
+<template id="ws-media-video-template">
+  <div class="ws-post-media__item"><video src="" controls playsinline preload="metadata"></video></div>
+</template>
+<template id="ws-attach-tile-template">
+  <div class="ws-attach-tile rounded-3 bg-body-tertiary" data-attach-tile>
+    <img alt="" hidden>
+    <video muted playsinline preload="metadata" hidden></video>
+    <span class="ws-attach-tile__badge" data-attach-video-badge hidden><i class="bx bx-play" aria-hidden="true"></i></span>
+    <span class="ws-attach-tile__busy" data-attach-busy><span class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></span><span class="visually-hidden">Procesando…</span></span>
+    <button type="button" class="btn-close btn-close-white ws-attach-tile__remove" data-attach-remove aria-label="Quitar archivo"></button>
+  </div>
+</template>

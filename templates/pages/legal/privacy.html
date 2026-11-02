@@ -1,0 +1,16 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Aviso de privacidad · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{# Aviso de privacidad. Pública (se enlaza desde el inicio de sesión). El texto lo redacta o revisa el área Legal. #}
+<section class="pt-3" aria-labelledby="ws-privacy-title">
+  <header class="mb-3">
+    <h1 class="h4 fw-bolder mb-0" id="ws-privacy-title">Aviso de privacidad</h1>
+    <p class="small text-body-secondary mb-0">Cómo se tratan tus datos personales en Workspace.</p>
+  </header>
+  {% include "components/feedback/empty_state.html" with icon="bx-shield-quarter" title="El aviso de privacidad está en preparación" description="El área Legal publicará aquí el aviso de privacidad." only %}
+</section>
+{% endblock %}

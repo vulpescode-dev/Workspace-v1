@@ -1,0 +1,16 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Documentos · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{# Documentos. Página en construcción: el módulo (modelos, API) está pendiente; ver docs/backlog.md. #}
+<section class="pt-3" aria-labelledby="ws-documents-title">
+  <header class="mb-3">
+    <h1 class="h4 fw-bolder mb-0" id="ws-documents-title">Documentos</h1>
+    <p class="small text-body-secondary mb-0">Políticas, formatos y manuales de la empresa.</p>
+  </header>
+  {% include "components/feedback/empty_state.html" with icon="bx-folder-open" title="Documentos está en construcción" description="Pronto podrás consultar y descargar aquí los documentos de la empresa." only %}
+</section>
+{% endblock %}

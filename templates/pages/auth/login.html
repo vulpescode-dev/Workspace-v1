@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Iniciar sesión · Workspace{% endblock %}
+
+{% block app_shell %}
+{% comment %}
+Inicio de sesión de dos maneras:
+1. «Continuar con Google» (django-allauth, solo cuentas @google_domain; reglas en apps/accounts/adapters.py).
+   Es un POST con CSRF a /accounts/google/login/. Sin credenciales: deshabilitado en desarrollo, oculto en producción.
+2. Usuario o correo (apps.accounts.backends.UsernameOrEmailBackend) y la contraseña. login.js: mostrar/ocultar contraseña, aviso de Bloq Mayús y estado «Entrando…»
+(evita el doble envío). Escritorio: panel de marca a la izquierda; móvil: encabezado de marca arriba.
+Emojis animados (Noto, los de las reacciones): se ve el SVG fijo y login.js lo anima una vez con lottie
+(y otra al pasar el mouse por una tarjetita). Con «reducir movimiento» se queda fijo.
+{% endcomment %}
+<main class="ws-auth-page">
+  <section class="ws-auth-brand" aria-hidden="true">
+    <div class="ws-auth-brand__inner">
+      <div class="ws-auth-logo"><i class="bx bxl-xing"></i> Workspace</div>
+      <div class="ws-auth-brand__copy">
+        <h2 class="ws-auth-brand__title">Tu empresa, en tu bolsillo.</h2>
+        <p class="ws-auth-brand__text">Publicaciones, avisos y personas en un solo lugar.</p>
+      </div>
+      <div class="ws-auth-preview">
+        <div class="ws-auth-chip ws-auth-chip--1"><span class="ws-auth-chip__icon bg-primary-subtle text-primary"><i class="bx bx-user-plus"></i></span><span><strong>Ana Robles</strong> empezó a seguirte</span><span class="ws-auth-emoji" aria-hidden="true" data-login-emoji="{% static 'assets/emoji/heart_hands/lottie.json' %}"><img src="{% static 'assets/emoji/heart_hands/emoji.svg' %}" alt="" width="28" height="28"></span></div>
+        <div class="ws-auth-chip ws-auth-chip--2"><span class="ws-auth-chip__icon bg-warning-subtle text-warning-emphasis"><i class="bx bx-party"></i></span><span>Aniversario #10 de Guillermo</span><span class="ws-auth-emoji" aria-hidden="true" data-login-emoji="{% static 'assets/emoji/party_popper/lottie.json' %}"><img src="{% static 'assets/emoji/party_popper/emoji.svg' %}" alt="" width="28" height="28"></span></div>
+        <div class="ws-auth-chip ws-auth-chip--3"><span class="ws-auth-chip__icon bg-success-subtle text-success"><i class="bx bx-conversation"></i></span><span>3 comentarios nuevos</span><span class="ws-auth-emoji" aria-hidden="true" data-login-emoji="{% static 'assets/emoji/joy/lottie.json' %}"><img src="{% static 'assets/emoji/joy/emoji.svg' %}" alt="" width="28" height="28"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ws-auth-panel">
+    <form method="post" class="ws-auth-card{% if form.errors %} has-error{% endif %}" novalidate data-login-form>
+      {% csrf_token %}
+      <div class="ws-auth-logo ws-auth-logo--form"><i class="bx bxl-xing"></i> Workspace</div>
+      <h1 class="h3 fw-bolder mb-1 d-flex align-items-center gap-2">Inicia sesión <span class="ws-auth-emoji ws-auth-emoji--title" aria-hidden="true" data-login-emoji="{% static 'assets/emoji/hugging/lottie.json' %}"><img src="{% static 'assets/emoji/hugging/emoji.svg' %}" alt="" width="28" height="28"></span></h1>
+      <p class="text-body-secondary mb-4">Entra con tu cuenta de Google de la empresa o con tu usuario.</p>
+
+      {% for message in messages %}
+        <div class="alert alert-danger d-flex align-items-center gap-2 py-2 small ws-auth-alert" role="alert">
+          <i class="bx bx-error-circle fs-5" aria-hidden="true"></i>
+          <span>{{ message }}</span>
+        </div>
+      {% endfor %}
+
+      {% if google_enabled or google_pending %}
+        <button type="submit" class="btn btn-lg w-100 ws-auth-google" form="ws-google-login"
+                {% if google_pending %}disabled aria-describedby="ws-google-pending"{% endif %}>
+          <svg class="ws-auth-google__logo" viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          Continuar con Google
+        </button>
+        {% if google_pending %}
+          <p class="small text-body-secondary text-center mt-2 mb-0" id="ws-google-pending">Falta configurar las credenciales de Google en <code>.env</code>.</p>
+        {% else %}
+          <p class="small text-body-secondary text-center mt-2 mb-0">Solo cuentas <strong>@{{ google_domain }}</strong>.</p>
+        {% endif %}
+        <div class="ws-auth-divider"><span>o con tu usuario</span></div>
+      {% endif %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger d-flex align-items-center gap-2 py-2 small ws-auth-alert" role="alert">
+          <i class="bx bx-error-circle fs-5" aria-hidden="true"></i>
+          <span>{{ form.non_field_errors.0 }}</span>
+        </div>
+      {% endif %}
+
+      <div class="mb-3">
+        <label class="form-label small fw-semibold" for="id_username">Usuario o correo</label>
+        <div class="ws-auth-field">
+          <i class="bx bx-user ws-auth-field__icon" aria-hidden="true"></i>
+          <input type="text" class="form-control form-control-lg{% if form.errors %} is-invalid{% endif %}" id="id_username" name="username"
+                 value="{{ form.username.value|default:'' }}" maxlength="254" placeholder="usuario o nombre@empresa.com"
+                 autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" inputmode="email" required
+                 {% if not form.username.value %}autofocus{% endif %}>
+        </div>
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label small fw-semibold" for="id_password">Contraseña</label>
+        <div class="ws-auth-field">
+          <i class="bx bx-lock-alt ws-auth-field__icon" aria-hidden="true"></i>
+          <input type="password" class="form-control form-control-lg ws-auth-field__password{% if form.errors %} is-invalid{% endif %}" id="id_password" name="password"
+                 placeholder="••••••••" autocomplete="current-password" required {% if form.username.value %}autofocus{% endif %}>
+          <button type="button" class="ws-auth-field__toggle" data-password-toggle aria-pressed="false" aria-controls="id_password" aria-label="Mostrar contraseña">
+            <i class="bx bx-show" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="small text-warning-emphasis mt-2 mb-0 ws-auth-caps" data-caps-hint hidden><i class="bx bx-up-arrow-alt" aria-hidden="true"></i> Bloq Mayús está activado</p>
+      </div>
+
+      <p class="small text-body-secondary mb-4">¿Olvidaste tu contraseña? Pide a Soporte TI que la restablezca.</p>
+
+      <input type="hidden" name="next" value="{{ next|default:'/' }}">
+      <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold ws-auth-submit" data-login-submit>
+        <span class="ws-auth-submit__label">Entrar</span>
+        <span class="ws-auth-submit__loading" aria-hidden="true"><span class="spinner-border spinner-border-sm"></span> Entrando…</span>
+      </button>
+
+      {# Términos y privacidad se pueden leer antes de entrar (páginas públicas). Dentro de la tarjeta, debajo de «Entrar». #}
+      <footer class="ws-legal-links ws-auth-legal">
+        <a href="{% url 'terms' %}">Términos y condiciones</a><span aria-hidden="true">·</span><a href="{% url 'privacy' %}">Aviso de privacidad</a>
+      </footer>
+    </form>
+    {% if google_enabled %}
+      {# Formulario aparte (no se anidan formularios): POST con CSRF, sin pantalla intermedia de allauth. #}
+      <form method="post" action="{% url 'google_login' %}" id="ws-google-login" hidden>
+        {% csrf_token %}
+        <input type="hidden" name="process" value="login">
+        <input type="hidden" name="next" value="{{ next|default:'/' }}">
+      </form>
+    {% endif %}
+  </section>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'assets/js/login.js' %}" defer data-lottie-src="{% static 'assets/vendor/lottie/lottie_light.min.js' %}"></script>
+{% endblock %}

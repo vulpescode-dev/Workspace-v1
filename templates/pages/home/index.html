@@ -1,0 +1,49 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Inicio · Workspace{% endblock %}
+
+{% block shell_class %} has-aside{% endblock %}
+
+{% block content %}
+<section class="pt-3" aria-label="Inicio">
+
+  <div class="mb-3">
+    <h1 class="h5 fw-medium lh-sm mb-1">{{ greeting }},<br><span class="fs-2 fw-bolder">{{ display_name }}</span> <span aria-hidden="true">👋</span></h1>
+    <p class="small text-body-secondary mb-0">Encuentra lo que necesitas para trabajar mejor hoy.</p>
+  </div>
+
+  <nav class="d-flex gap-3 overflow-x-auto pb-3 ws-categories" aria-label="Accesos rápidos">
+    {% for cat in categories %}
+      <a href="{% if cat.href %}{% url cat.href %}{% else %}#{% endif %}" class="d-flex flex-column align-items-center gap-2 text-decoration-none text-body ws-category"{% if cat.soon %} data-ws-soon="{{ cat.soon }}"{% endif %}>
+        <span class="d-flex align-items-center justify-content-center rounded-4 shadow-sm fs-2 bg-{{ cat.color }}-subtle text-{{ cat.color }}-emphasis ws-category__icon"><i class="bx {{ cat.icon }}" aria-hidden="true"></i></span>
+        <span class="fw-semibold text-center text-nowrap ws-category__label">{{ cat.label }}</span>
+      </a>
+    {% endfor %}
+  </nav>
+
+  {% if user.is_authenticated %}
+    {% include "components/posts/create_post_card.html" with display_initials=display_initials display_avatar_url=display_avatar_url only %}
+  {% endif %}
+
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="h5 fw-bold mb-0">Publicaciones</h2>
+    <button type="button" class="btn btn-link fw-semibold text-decoration-none p-0 d-inline-flex align-items-center gap-1" data-ws-feed-reload><i class="bx bx-refresh fs-5" aria-hidden="true"></i> Recargar</button>
+  </div>
+
+  {% include "components/posts/feed.html" with empty_description="Sé la primera persona en compartir algo con el equipo." %}
+</section>
+
+{% endblock %}
+
+{% block aside %}{% include "pages/home/widgets.html" %}{% endblock %}
+
+{% block page_modals %}
+  {% include "components/posts/feed_modals.html" with show_composer=True %}
+{% endblock %}
+
+{% block extra_js %}
+  {% load static %}
+  {% include "components/posts/feed_scripts.html" %}
+  <script src="{% static 'assets/js/follow.js' %}" defer></script>
+  <script src="{% static 'assets/js/widgets.js' %}" defer></script>
+{% endblock %}

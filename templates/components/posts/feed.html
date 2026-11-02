@@ -1,0 +1,44 @@
+{% comment %}
+Feed de publicaciones (lo llena feed.js desde la API). Se usa en Inicio y en el Perfil.
+Variables:
+- feed_url: listado a pedir (p. ej. /api/social/posts/ o /api/social/posts/?author=5)
+- empty_title, empty_description: textos del estado vacío
+- data-ws-page-size: cuántas publicaciones pide por página (la API acepta 1–25; 25 si no se indica).
+  Hoy 5 para que el scroll infinito se note con pocos datos.
+Los estados (cargando/vacío/error/sin sesión) están aquí para no inventar HTML en JS.
+{% endcomment %}
+{% url 'social-api:post-list' as posts_url %}
+<div id="ws-feed" data-ws-feed="{{ feed_url|default:posts_url }}" data-ws-posts-url="{{ posts_url }}" data-ws-page-size="5" aria-live="polite" aria-busy="true">
+  <div data-ws-feed-list></div>
+  <div data-ws-feed-state="loading">
+    {% include "components/feedback/empty_state.html" with spinner=True title="Cargando publicaciones…" only %}
+  </div>
+  <div data-ws-feed-state="empty" hidden>
+    {% include "components/feedback/empty_state.html" with icon="bx-news" title=empty_title|default:"Todavía no hay publicaciones" description=empty_description only %}
+  </div>
+  <div data-ws-feed-state="auth" hidden>
+    {% url 'accounts:login' as login_url %}
+    {% include "components/feedback/empty_state.html" with icon="bx-lock-alt" title="Inicia sesión para ver las publicaciones" action_label="Iniciar sesión" action_href=login_url only %}
+  </div>
+  <div data-ws-feed-state="error" hidden>
+    {% include "components/feedback/empty_state.html" with icon="bx-error" title="No se pudieron cargar las publicaciones" description="Revisa tu conexión y pulsa Recargar." only %}
+  </div>
+  {% comment %}
+  Scroll infinito (25 por página): al acercarse a este bloque se pide la siguiente página.
+  El botón queda de respaldo (sin IntersectionObserver o si falló la carga).
+  {% endcomment %}
+  <div class="text-center py-3 mb-3" data-ws-feed-more hidden>
+    <div class="spinner-border spinner-border-sm text-primary" role="status" data-ws-feed-more-spinner hidden>
+      <span class="visually-hidden">Cargando más publicaciones…</span>
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm" data-ws-feed-next hidden>Ver más</button>
+  </div>
+</div>
+
+<template id="ws-post-template">
+  {% include "components/posts/post_card.html" %}
+</template>
+<template id="ws-reaction-chip-template">
+  {% include "components/posts/reaction_chip.html" %}
+</template>
+{% include "components/posts/post_media.html" %}

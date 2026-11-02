@@ -1,0 +1,271 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Perfil · Workspace{% endblock %}
+
+{# Como el perfil de Facebook: en pantallas grandes sin menú lateral, perfil ancho y centrado. #}
+{% block shell_class %} no-sidebar{% endblock %}
+{% block container_class %}ws-container--wide{% endblock %}
+
+{% block content %}
+{% comment %}
+Perfil (shell). profile.js pide los datos a la API y los pinta; mientras tanto se ve un esqueleto.
+- Teléfono: encabezado centrado y las mismas pestañas debajo (Seguidores también se abre desde los contadores).
+- Pantallas grandes (≥ 992px, como el perfil de Facebook con nuestro tema): portada ancha, foto a la
+  izquierda sobre el borde, nombre/cargo/cumpleaños, acciones a la derecha y pestañas subrayadas
+  Todo · Información · Seguidores · Fotos. «Todo» = Datos + fotos (izquierda) y publicaciones.
+- Los datos repetidos (bio, filas de Datos/Información) llevan el mismo data-profile-*: profile.js llena todas las copias.
+{% endcomment %}
+<div class="ws-profile pt-3" data-profile data-tab="posts" aria-busy="true"
+     data-profile-url="{% url 'accounts-api:user-profile' profile_id %}"
+     data-me-url="{% url 'accounts-api:me' %}"
+     data-me-avatar-url="{% url 'accounts-api:me-avatar' %}"
+     data-photos-url="{% url 'social-api:photo-list' %}?author={{ profile_id }}"
+     data-followers-url="{% url 'social-api:user-followers' profile_id %}"
+     data-following-url="{% url 'social-api:user-following' profile_id %}">
+
+  <section class="card border-0 shadow-sm rounded-4 overflow-hidden mb-3" aria-labelledby="ws-profile-name">
+    {# Portada estática de la empresa, igual para todos (no se edita). #}
+    <div class="ws-profile-cover" aria-hidden="true"></div>
+
+    <div class="card-body pt-0 ws-profile-head">
+      <div class="ws-profile-avatar-wrap">
+        <span class="ws-avatar ws-avatar--xl rounded-circle d-inline-flex align-items-center justify-content-center fw-bold bg-primary-subtle text-primary ws-profile-avatar" data-profile-avatar aria-hidden="true"></span>
+        {% if is_me %}
+          <button type="button" class="btn btn-light rounded-circle shadow-sm ws-icon-btn ws-profile-avatar__edit" data-profile-pick="avatar" aria-label="Cambiar foto de perfil">
+            <i class="bx bx-camera fs-5" aria-hidden="true"></i>
+          </button>
+        {% endif %}
+      </div>
+
+      <div class="ws-profile-identity placeholder-glow" data-profile-identity>
+        <h1 class="h3 fw-bolder mb-1" id="ws-profile-name" data-profile-field="name"><span class="placeholder col-7 rounded-2"></span></h1>
+        <p class="text-body-secondary fw-medium mb-1" data-profile-field="headline"><span class="placeholder col-5 rounded-2"></span></p>
+        <p class="small text-body-secondary mb-0 ws-profile-birthday" data-profile-field="birthday" hidden><i class="bx bx-cake" aria-hidden="true"></i> <span></span></p>
+        {# Seguidores / seguidos: abren la lista. «Te sigue» aparece si esta persona me sigue. #}
+        <div class="ws-profile-stats small mt-2">
+          <button type="button" class="btn btn-link btn-sm p-0 text-body text-decoration-none" data-people-open="followers"><strong data-stat="followers">0</strong> <span data-stat-label="followers">seguidores</span></button>
+          <span class="text-body-tertiary" aria-hidden="true">·</span>
+          <button type="button" class="btn btn-link btn-sm p-0 text-body text-decoration-none" data-people-open="following"><strong data-stat="following">0</strong> seguidos</button>
+          <span class="badge rounded-pill text-bg-light border fw-semibold" data-profile-follows-me hidden>Te sigue</span>
+        </div>
+      </div>
+
+      <div class="ws-profile-actions">
+        {% if is_me %}
+          <button type="button" class="btn btn-light fw-semibold d-inline-flex align-items-center gap-2" data-profile-edit>
+            <i class="bx bx-edit-alt fs-5" aria-hidden="true"></i> Editar perfil
+          </button>
+        {% else %}
+          {# Sin utilidades d-*flex en lo que se oculta: Bootstrap las marca !important y anularían hidden. #}
+          <button type="button" class="btn btn-primary fw-semibold ws-follow-btn" data-follow-btn aria-pressed="false">
+            <i class="bx bx-user-plus fs-5" aria-hidden="true"></i><span data-follow-label>Seguir</span>
+          </button>
+          <a class="btn btn-light fw-semibold ws-icon-btn" data-profile-email aria-label="Enviar correo" title="Enviar correo" hidden>
+            <i class="bx bx-envelope fs-5" aria-hidden="true"></i>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Pestañas (como Facebook): teléfono = píldoras con desplazamiento; ≥ 992px = subrayado bajo el encabezado. #}
+    <nav class="ws-profile-tabs" aria-label="Secciones del perfil">
+      <div class="nav ws-profile-tabs__list" role="tablist">
+        <button type="button" class="nav-link active" data-profile-tab-btn="posts" role="tab" aria-selected="true">Todo</button>
+        <button type="button" class="nav-link" data-profile-tab-btn="info" role="tab" aria-selected="false">Información</button>
+        <button type="button" class="nav-link" data-profile-tab-btn="people" role="tab" aria-selected="false">Seguidores</button>
+        <button type="button" class="nav-link" data-profile-tab-btn="photos" role="tab" aria-selected="false">Fotos</button>
+      </div>
+    </nav>
+  </section>
+
+  <div class="text-center py-5" data-profile-error hidden>
+    {% include "components/feedback/empty_state.html" with icon="bx-user-x" title="No encontramos este perfil" description="Puede que la persona ya no esté activa en Workspace." only %}
+  </div>
+
+  <div data-profile-body>
+    {# «Todo». Teléfono: solo publicaciones. ≥ 992px: a la izquierda «Datos» y vista previa de fotos; a la derecha publicaciones. #}
+    <section data-profile-panel="posts" aria-label="Todo">
+      <div class="ws-profile-all">
+        <aside class="ws-profile-all__side" aria-label="Resumen">
+          <div class="card border-0 shadow-sm rounded-4 mb-3">
+            <div class="card-body">
+              <h2 class="h5 fw-bold mb-3">Datos</h2>
+              <p class="mb-3 small ws-profile-bio" data-profile-field="bio"></p>
+              <ul class="list-unstyled d-grid gap-3 mb-3 small">
+                <li class="ws-info-row" data-profile-row="job_title" hidden><i class="bx bx-briefcase fs-5 text-primary" aria-hidden="true"></i><div class="fw-semibold" data-value></div></li>
+                <li class="ws-info-row" data-profile-row="department" hidden><i class="bx bx-buildings fs-5 text-primary" aria-hidden="true"></i><div class="fw-semibold" data-value></div></li>
+                <li class="ws-info-row" data-profile-row="birthday" hidden><i class="bx bx-cake fs-5 text-primary" aria-hidden="true"></i><div class="fw-semibold" data-value></div></li>
+                <li class="ws-info-row" data-profile-row="email" hidden><i class="bx bx-envelope fs-5 text-primary" aria-hidden="true"></i><a class="fw-semibold text-break min-w-0" data-value></a></li>
+              </ul>
+              <button type="button" class="btn btn-light w-100 fw-semibold ws-press" data-profile-goto="info">Ver toda la información</button>
+            </div>
+          </div>
+          <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+              <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+                <h2 class="h5 fw-bold mb-0">Fotos</h2>
+                <button type="button" class="btn btn-link btn-sm fw-semibold text-decoration-none p-0 text-nowrap" data-profile-goto="photos">Ver todas</button>
+              </div>
+              <div class="ws-photo-grid ws-photo-grid--preview" data-photos-preview></div>
+              <p class="small text-body-secondary mb-0" data-photos-preview-empty hidden>Todavía no hay fotos.</p>
+            </div>
+          </div>
+        </aside>
+
+        <div class="ws-profile-all__main">
+          {% if is_me %}
+            {% include "components/posts/create_post_card.html" with display_initials=display_initials display_avatar_url=display_avatar_url only %}
+          {% endif %}
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="h5 fw-bold mb-0">Publicaciones</h2>
+            <button type="button" class="btn btn-link fw-semibold text-decoration-none p-0 d-inline-flex align-items-center gap-1" data-ws-feed-reload><i class="bx bx-refresh fs-5" aria-hidden="true"></i> Recargar</button>
+          </div>
+          {% if is_me %}
+            {% include "components/posts/feed.html" with empty_title="Aún no has publicado nada" empty_description="Lo que compartas aparecerá aquí." %}
+          {% else %}
+            {% include "components/posts/feed.html" with empty_title="Todavía no ha publicado nada" empty_description="" %}
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <section data-profile-panel="info" aria-label="Información">
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body">
+          <h2 class="h5 fw-bold mb-3">Información</h2>
+          <p class="mb-3 ws-profile-bio" data-profile-field="bio"></p>
+          <ul class="list-unstyled d-grid gap-3 mb-0 small ws-profile-info">
+            <li class="ws-info-row" data-profile-row="job_title" hidden><i class="bx bx-briefcase fs-5 text-primary" aria-hidden="true"></i><div><div class="text-body-secondary">Cargo</div><div class="fw-semibold" data-value></div></div></li>
+            <li class="ws-info-row" data-profile-row="department" hidden><i class="bx bx-buildings fs-5 text-primary" aria-hidden="true"></i><div><div class="text-body-secondary">Área</div><div class="fw-semibold" data-value></div></div></li>
+            <li class="ws-info-row" data-profile-row="birthday" hidden><i class="bx bx-cake fs-5 text-primary" aria-hidden="true"></i><div><div class="text-body-secondary">Cumpleaños</div><div class="fw-semibold" data-value></div></div></li>
+            <li class="ws-info-row" data-profile-row="email" hidden><i class="bx bx-envelope fs-5 text-primary" aria-hidden="true"></i><div class="min-w-0"><div class="text-body-secondary">Correo</div><a class="fw-semibold text-break" data-value></a></div></li>
+            <li class="ws-info-row" data-profile-row="date_joined" hidden><i class="bx bx-calendar fs-5 text-primary" aria-hidden="true"></i><div><div class="text-body-secondary">En Workspace desde</div><div class="fw-semibold" data-value></div></div></li>
+            <li class="ws-info-row" data-profile-row="posts_count" hidden><i class="bx bx-news fs-5 text-primary" aria-hidden="true"></i><div><div class="text-body-secondary">Publicaciones</div><div class="fw-semibold" data-value></div></div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    {# Seguidores / Seguidos: la misma lista del modal (profile.js), aquí dentro de la página. Se carga al abrir la pestaña. #}
+    <section data-profile-panel="people" aria-label="Seguidores y seguidos">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body pb-2">
+          <h2 class="h5 fw-bold mb-3">Personas</h2>
+          <div class="ws-segmented" role="tablist" aria-label="Ver">
+            <button type="button" class="active" data-people-kind="followers" role="tab" aria-selected="true">Seguidores <span class="ws-segmented__count" data-stat="followers">0</span></button>
+            <button type="button" data-people-kind="following" role="tab" aria-selected="false">Seguidos <span class="ws-segmented__count" data-stat="following">0</span></button>
+          </div>
+        </div>
+        <div data-people-box>
+          <ul class="list-group list-group-flush ws-people-panel" data-people-list></ul>
+          <div class="text-center py-4" data-people-state="loading">
+            <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando…</span></div>
+          </div>
+          <p class="text-center text-body-secondary py-4 mb-0" data-people-state="empty" hidden></p>
+          <div class="text-center py-3" data-people-more hidden>
+            <button type="button" class="btn btn-outline-primary btn-sm" data-people-next>Ver más</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {# Fotos: todas las imágenes de sus publicaciones. Se cargan la primera vez que se abre la pestaña. #}
+    <section data-profile-panel="photos" aria-label="Fotos">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="ws-photo-grid" data-photos-grid></div>
+        <div data-photos-state="loading" hidden>
+          {% include "components/feedback/empty_state.html" with spinner=True title="Cargando fotos…" only %}
+        </div>
+        <div data-photos-state="empty" hidden>
+          {% include "components/feedback/empty_state.html" with icon="bx-image" title="Todavía no hay fotos" description="Las fotos de sus publicaciones aparecerán aquí." only %}
+        </div>
+        <div data-photos-state="error" hidden>
+          {% include "components/feedback/empty_state.html" with icon="bx-error" title="No se pudieron cargar las fotos" only %}
+        </div>
+      </div>
+      <div class="text-center my-3" data-photos-more hidden>
+        <button type="button" class="btn btn-outline-primary btn-sm" data-photos-next>Ver más fotos</button>
+      </div>
+    </section>
+  </div>
+
+  {# Selector de foto para mi perfil. Se convierte a WebP antes de subir. #}
+  {% if is_me %}<input type="file" class="d-none" accept="image/*" data-profile-file>{% endif %}
+</div>
+{% endblock %}
+
+{% block page_modals %}
+  {% include "components/posts/feed_modals.html" with show_composer=is_me %}
+
+  {# Seguidores / Seguidos #}
+  <div class="modal fade" id="ws-people-modal" tabindex="-1" aria-labelledby="ws-people-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-sm-down">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title h5 fw-bold" id="ws-people-title" data-people-title>Seguidores</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body p-0" data-people-box>
+          <ul class="list-group list-group-flush" data-people-list></ul>
+          <div class="text-center py-4" data-people-state="loading">
+            <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando…</span></div>
+          </div>
+          <p class="text-center text-body-secondary py-4 mb-0" data-people-state="empty" hidden></p>
+          <div class="text-center py-3" data-people-more hidden>
+            <button type="button" class="btn btn-outline-primary btn-sm" data-people-next>Ver más</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <template id="ws-person-template">
+    <li class="list-group-item ws-person">
+      <a class="flex-shrink-0" data-person-link tabindex="-1" aria-hidden="true">
+        <span class="ws-avatar rounded-circle d-inline-flex align-items-center justify-content-center fw-bold bg-primary-subtle text-primary" data-person-avatar></span>
+      </a>
+      <div class="flex-grow-1 min-w-0">
+        <a class="fw-semibold text-body text-decoration-none ws-author-link d-block text-truncate" data-person-name></a>
+        <div class="small text-body-secondary text-truncate" data-person-job></div>
+      </div>
+      <button type="button" class="btn btn-sm fw-semibold ws-follow-btn" data-follow-btn aria-pressed="false">
+        <span data-follow-label>Seguir</span>
+      </button>
+    </li>
+  </template>
+  {% if is_me %}
+    <div class="modal fade" id="ws-profile-edit-modal" tabindex="-1" aria-labelledby="ws-profile-edit-title" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <form class="modal-content" data-profile-edit-form novalidate>
+          <div class="modal-header">
+            <h2 class="modal-title h5 fw-bold" id="ws-profile-edit-title">Editar perfil</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <label class="form-label fw-semibold" for="ws-profile-bio">Presentación</label>
+            <textarea class="form-control ws-edit-text" id="ws-profile-bio" name="bio" rows="3" maxlength="280" placeholder="Cuéntale al equipo a qué te dedicas o qué te gusta."></textarea>
+            <div class="form-text text-end" data-bio-count>0 / 280</div>
+
+            <hr>
+            <p class="fw-semibold mb-2">Foto de perfil</p>
+            <div class="d-flex flex-wrap gap-2">
+              <button type="button" class="btn btn-light d-inline-flex align-items-center gap-2" data-profile-pick="avatar"><i class="bx bx-camera" aria-hidden="true"></i> Cambiar foto</button>
+              <button type="button" class="btn btn-outline-danger ws-btn-icon" data-profile-remove="avatar" hidden><i class="bx bx-trash" aria-hidden="true"></i> Quitar foto</button>
+            </div>
+            <p class="small text-body-secondary mt-3 mb-0">Cargo, área y fecha de nacimiento los actualiza Recursos Humanos.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary fw-semibold">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+  {% load static %}
+  {% include "components/posts/feed_scripts.html" %}
+  <script src="{% static 'assets/js/follow.js' %}" defer></script>
+  <script src="{% static 'assets/js/profile.js' %}" defer></script>
+{% endblock %}

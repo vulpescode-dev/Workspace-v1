@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+db.sqlite3
+*.sqlite3
+media/
+staticfiles/
+.idea/
+.DS_Store
+
+# Capturas y referencias de diseño: nunca al repo
+docs/**/*.png
+docs/**/*.jpg
+docs/**/*.jpeg
+docs/**/*.webp
+docs/**/*.gif
+docs/private/

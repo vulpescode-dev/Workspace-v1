@@ -1,0 +1,9 @@
+{# Pestañas de Personas: Directorio · Organigrama. Recibe ``current`` ("directory" | "chart"). #}
+<nav class="nav nav-underline ws-people-tabs mb-3" aria-label="Vistas de Personas">
+  <a class="nav-link{% if current == "directory" %} active{% endif %}" href="{% url 'people' %}"{% if current == "directory" %} aria-current="page"{% endif %}>
+    <i class="bx bx-grid-alt" aria-hidden="true"></i> Directorio
+  </a>
+  <a class="nav-link{% if current == "chart" %} active{% endif %}" href="{% url 'org-chart' %}"{% if current == "chart" %} aria-current="page"{% endif %}>
+    <i class="bx bx-sitemap" aria-hidden="true"></i> Organigrama
+  </a>
+</nav>

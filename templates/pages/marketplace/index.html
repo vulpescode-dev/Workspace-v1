@@ -1,0 +1,16 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Marketplace · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{# Marketplace. Página en construcción: las publicaciones ya existen en la API (/api/marketplace/listings/); falta pintarlas aquí. #}
+<section class="pt-3" aria-labelledby="ws-marketplace-title">
+  <header class="mb-3">
+    <h1 class="h4 fw-bolder mb-0" id="ws-marketplace-title">Marketplace</h1>
+    <p class="small text-body-secondary mb-0">Compra, vende o regala entre compañeros.</p>
+  </header>
+  {% include "components/feedback/empty_state.html" with icon="bx-store" title="Marketplace está en construcción" description="Pronto podrás publicar y ver artículos de tus compañeros." only %}
+</section>
+{% endblock %}

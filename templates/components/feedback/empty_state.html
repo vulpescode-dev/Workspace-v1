@@ -1,0 +1,13 @@
+{# Variables: icon (clase boxicons), title, description (opcional), action_label + action_href (opcional), spinner (opcional). #}
+<div class="card border-0 shadow-sm rounded-4 text-center text-body-secondary mb-3">
+  <div class="card-body py-4">
+    {% if spinner %}
+      <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
+    {% else %}
+      <i class="bx {{ icon }} display-6 text-primary" aria-hidden="true"></i>
+    {% endif %}
+    <h3 class="h6 fw-bold text-body mt-2 mb-1">{{ title }}</h3>
+    {% if description %}<p class="small mb-0">{{ description }}</p>{% endif %}
+    {% if action_label and action_href %}<a class="btn btn-primary btn-sm mt-3" href="{{ action_href }}">{{ action_label }}</a>{% endif %}
+  </div>
+</div>

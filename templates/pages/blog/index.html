@@ -1,0 +1,16 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Noticias · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{# Noticias (blog). Página en construcción: los artículos ya existen en la API (/api/blog/articles/); falta pintarlos aquí. #}
+<section class="pt-3" aria-labelledby="ws-blog-title">
+  <header class="mb-3">
+    <h1 class="h4 fw-bolder mb-0" id="ws-blog-title">Noticias</h1>
+    <p class="small text-body-secondary mb-0">Artículos y comunicados de la empresa.</p>
+  </header>
+  {% include "components/feedback/empty_state.html" with icon="bx-news" title="Noticias está en construcción" description="Pronto podrás leer aquí los artículos y comunicados de Workspace." only %}
+</section>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% comment %}
+Comentarios de una publicación (Bootstrap Modal). comments.js lo llena desde /api/social/posts/<id>/comments/.
+data-bs-focus="false": deja usar el selector de emojis (offcanvas) encima del modal.
+{% endcomment %}
+<div class="modal fade" id="ws-comments-modal" tabindex="-1" aria-labelledby="ws-comments-title" aria-hidden="true"
+     data-bs-focus="false" data-comment-url="{% url 'social-api:comment-detail' 0 %}">
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-sm-down">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title h5 fw-bold" id="ws-comments-title">Comentarios</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body" data-comments-body>
+        <ul class="list-unstyled d-grid gap-3 mb-0" data-comments-list aria-live="polite"></ul>
+        <div class="text-center py-4" data-comments-state="loading">
+          <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando…</span></div>
+        </div>
+        <div class="text-center text-body-secondary py-4" data-comments-state="empty" hidden>
+          <i class="bx bx-message-rounded-dots display-6 text-primary" aria-hidden="true"></i>
+          <p class="fw-semibold text-body mt-2 mb-0">Todavía no hay comentarios</p>
+          <p class="small mb-0">Sé la primera persona en comentar.</p>
+        </div>
+        <div class="text-center text-body-secondary py-4" data-comments-state="error" hidden>
+          <p class="mb-0">No se pudieron cargar los comentarios.</p>
+        </div>
+        <div class="text-center mt-3" data-comments-more hidden>
+          <button type="button" class="btn btn-outline-primary btn-sm" data-comments-next>Ver más comentarios</button>
+        </div>
+      </div>
+      <div class="modal-footer d-block p-2">
+        <div class="small text-body-secondary px-2 pb-2 ws-reply-banner" data-reply-banner hidden>
+          <i class="bx bx-reply" aria-hidden="true"></i>
+          <span class="flex-grow-1 text-truncate">Respondiendo a <strong class="text-body" data-reply-name></strong></span>
+          <button type="button" class="btn-close btn-sm" data-reply-cancel aria-label="Cancelar respuesta"></button>
+        </div>
+        <form class="d-flex align-items-end gap-2" data-comments-form novalidate>
+          <label class="visually-hidden" for="ws-comment-text">Escribe un comentario</label>
+          <textarea class="form-control rounded-4 bg-body-tertiary border-0 ws-comment-input" id="ws-comment-text" name="body" rows="1" maxlength="2000" placeholder="Escribe un comentario…"></textarea>
+          <button type="submit" class="btn btn-primary rounded-circle flex-shrink-0 ws-icon-btn ws-submit" data-comments-submit aria-label="Enviar comentario" disabled>
+            <i class="bx bx-send fs-5 ws-submit__label" aria-hidden="true"></i>
+            <span class="spinner-border spinner-border-sm ws-submit__spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Un comentario (o respuesta). Es anfitrión de reacciones; las respuestas van en [data-comment-replies]. #}
+<template id="ws-comment-template">
+  <li class="ws-comment" data-comment-id="" data-reaction-host>
+    <div class="d-flex align-items-start gap-2">
+      <a class="flex-shrink-0" data-comment-profile tabindex="-1" aria-hidden="true">
+        <span class="ws-avatar ws-avatar--sm rounded-circle d-inline-flex align-items-center justify-content-center fw-bold bg-primary-subtle text-primary" data-comment-initials></span>
+      </a>
+      <div class="min-w-0 flex-grow-1">
+        <div class="bg-body-tertiary rounded-4 px-3 py-2 ws-comment__bubble">
+          <a class="fw-bold small text-body text-decoration-none ws-author-link" data-comment-author></a>
+          <div class="ws-post__text" data-comment-body></div>
+        </div>
+        <form class="mt-1" data-comment-edit-form novalidate hidden>
+          <textarea class="form-control ws-edit-text" rows="2" maxlength="2000" aria-label="Editar comentario"></textarea>
+          <div class="d-flex justify-content-end gap-2 mt-2">
+            <button type="button" class="btn btn-light btn-sm" data-comment-edit-cancel>Cancelar</button>
+            <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
+          </div>
+        </form>
+        <div class="d-flex flex-wrap align-items-center column-gap-3 small text-body-secondary mt-1 ms-2 ws-comment__meta">
+          <span><time data-comment-time data-ws-relative></time><span data-comment-edited hidden> · Editado</span></span>
+          <button type="button" class="btn btn-link btn-sm p-0 fw-semibold text-body-secondary text-decoration-none" data-reaction-add aria-haspopup="dialog">Reaccionar</button>
+          <button type="button" class="btn btn-link btn-sm p-0 fw-semibold text-body-secondary text-decoration-none" data-comment-reply>Responder</button>
+          <button type="button" class="btn btn-link btn-sm p-0 fw-semibold text-body-secondary text-decoration-none" data-comment-edit hidden>Editar</button>
+          <button type="button" class="btn btn-link btn-sm p-0 fw-semibold text-danger text-decoration-none" data-comment-delete hidden>Eliminar</button>
+        </div>
+        {# Pastillas de reacción (solo se ve cuando hay alguna). #}
+        <div class="ws-reactions ws-reactions--sm mt-1 ms-1" data-post-reactions>
+          <div class="ws-reaction-chips" data-reaction-chips></div>
+        </div>
+        <ul class="list-unstyled d-grid gap-3 mt-3 mb-0 ws-comment__replies" data-comment-replies></ul>
+      </div>
+    </div>
+  </li>
+</template>

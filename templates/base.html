@@ -1,0 +1,42 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0066cc">
+    {# App instalable (PWA): manifest en todas las páginas + íconos (scripts/make_icons.py). #}
+    <link rel="manifest" href="{% url 'manifest' %}">
+    <link rel="icon" href="{% static 'assets/img/icons/favicon.ico' %}" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/img/icons/favicon-32.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'assets/img/icons/apple-touch-icon.png' %}">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Workspace">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>{% block title %}Workspace{% endblock %}</title>
+    {# Orden: Bootstrap → tema de Bootstrap (colores de marca) → estilos propios. #}
+    <link rel="stylesheet" href="{% static 'assets/vendor/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap-theme.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/theme.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body data-home-url="{% url 'social:home' %}" data-profile-url="{% url 'profile' %}"
+    data-follow-url="{% url 'social-api:follow' 0 %}">
+    {% block app_shell %}{% endblock %}
+    {% block modals %}{% endblock %}
+    <script src="{% static 'assets/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/dayjs/dayjs.min.js' %}" defer></script>
+    <script src="{% static 'assets/vendor/dayjs/plugin/relativeTime.js' %}" defer></script>
+    <script src="{% static 'assets/vendor/dayjs/plugin/localizedFormat.js' %}" defer></script>
+    <script src="{% static 'assets/vendor/dayjs/locale/es.js' %}" defer></script>
+    <script src="{% static 'assets/js/workspace.js' %}" defer></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

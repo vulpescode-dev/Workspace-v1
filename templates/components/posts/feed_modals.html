@@ -1,0 +1,9 @@
+{# Modales y scripts que acompañan al feed (Inicio y Perfil). Variables: show_composer, display_name, display_initials. #}
+{% if user.is_authenticated %}
+  {% if show_composer %}
+    {% include "components/posts/create_post_modal.html" with display_name=display_name display_initials=display_initials display_avatar_url=display_avatar_url only %}
+  {% endif %}
+  {% include "components/posts/emoji_picker.html" %}
+  {% include "components/posts/reactions_modal.html" %}
+  {% include "components/posts/comments_modal.html" %}
+{% endif %}

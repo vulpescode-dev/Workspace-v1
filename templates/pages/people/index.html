@@ -1,0 +1,82 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Personas · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{% comment %}
+Directorio (shell). people.js pide /api/accounts/users/?search=&page= (25 por página) y pinta tarjetas.
+La búsqueda se hace mientras escribes (con una pausa corta) y queda en la URL (?q=).
+Sin columna de widgets: en pantallas grandes ocupa todo el ancho junto al menú.
+Jerarquía de cada tarjeta: nombre › cargo › área (etiqueta) › acción. «Seguir» es suave para no
+competir con los nombres (se repite en cada tarjeta).
+{% endcomment %}
+<section class="pt-3" data-people data-people-url="{% url 'accounts-api:user-list' %}" aria-labelledby="ws-people-title">
+  <header class="ws-page-head mb-3">
+    <div>
+      <h1 class="h4 fw-bolder mb-0" id="ws-people-title">Personas</h1>
+      <p class="small text-body-secondary mb-0 ws-people-count" data-people-count aria-live="polite"></p>
+    </div>
+    <form class="ws-page-head__search" role="search" data-people-search novalidate>
+      <label class="visually-hidden" for="ws-people-q">Buscar personas</label>
+      <div class="input-group shadow-sm rounded-pill overflow-hidden">
+        <span class="input-group-text bg-white border-0 ps-3"><i class="bx bx-search text-body-secondary" aria-hidden="true"></i></span>
+        <input type="search" class="form-control border-0" id="ws-people-q" name="q" value="{{ q }}" placeholder="Nombre, correo, cargo o área" autocomplete="off" enterkeyhint="search">
+      </div>
+    </form>
+  </header>
+  {% include "components/people/tabs.html" with current="directory" only %}
+
+  <div class="ws-people-grid" data-people-grid aria-busy="true"></div>
+
+  {# Esqueleto con la misma forma que las tarjetas (en vez de un spinner). #}
+  <div class="ws-people-grid" data-people-state="loading" aria-hidden="true">
+    {% for _ in "12345678" %}
+      <div class="card border-0 shadow-sm rounded-4 ws-person-card placeholder-glow">
+        <div class="ws-person-card__link">
+          <span class="placeholder rounded-circle ws-avatar ws-person-card__avatar"></span>
+          <span class="placeholder col-8 rounded-2"></span>
+          <span class="placeholder col-6 rounded-2"></span>
+          <span class="placeholder col-4 rounded-pill"></span>
+        </div>
+        <div class="ws-person-card__actions"><span class="placeholder col-12 rounded-2 ws-person-card__btn-placeholder"></span></div>
+      </div>
+    {% endfor %}
+  </div>
+  <div data-people-state="empty" hidden>
+    {% include "components/feedback/empty_state.html" with icon="bx-search-alt" title="No encontramos a nadie" description="Prueba con otro nombre, correo, cargo o área." only %}
+  </div>
+  <div data-people-state="error" hidden>
+    {% include "components/feedback/empty_state.html" with icon="bx-error" title="No se pudo cargar el directorio" description="Revisa tu conexión e inténtalo de nuevo." only %}
+  </div>
+  <div class="text-center my-3" data-people-more hidden>
+    <button type="button" class="btn btn-outline-primary btn-sm" data-people-next>Ver más personas</button>
+  </div>
+</section>
+
+<template id="ws-person-card-template">
+  <article class="card border-0 shadow-sm rounded-4 ws-person-card">
+    <a class="ws-person-card__link text-body text-decoration-none" data-person-link>
+      <span class="ws-avatar ws-person-card__avatar rounded-circle d-inline-flex align-items-center justify-content-center fw-bold bg-primary-subtle text-primary" data-person-avatar aria-hidden="true"></span>
+      <h2 class="ws-person-card__name text-truncate" data-person-name></h2>
+      <p class="ws-person-card__title text-truncate" data-person-title></p>
+      <span class="ws-person-card__dept text-truncate" data-person-dept hidden></span>
+    </a>
+    <div class="ws-person-card__actions">
+      <button type="button" class="btn btn-sm fw-semibold w-100 ws-follow-btn" data-follow-btn data-follow-variant="soft" aria-pressed="false">
+        <i class="bx bx-user-plus fs-5" aria-hidden="true"></i><span data-follow-label>Seguir</span>
+      </button>
+      <a class="btn btn-sm btn-light border fw-semibold w-100 ws-btn-icon justify-content-center" data-person-me hidden>
+        <i class="bx bx-user fs-5" aria-hidden="true"></i>Ver mi perfil
+      </a>
+    </div>
+  </article>
+</template>
+{% endblock %}
+
+{% block extra_js %}
+  {% load static %}
+  <script src="{% static 'assets/js/follow.js' %}" defer></script>
+  <script src="{% static 'assets/js/people.js' %}" defer></script>
+{% endblock %}

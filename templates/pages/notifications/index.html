@@ -1,0 +1,81 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Avisos · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{% comment %}
+Avisos = notificaciones (de todo Workspace: publicaciones, documentos, sistema…). Se llega desde la
+campana del encabezado y desde «Avisos» en la barra inferior. notifications.js pide /api/notifications/
+(25 por página). Si un aviso tiene enlace, al tocarlo lleva a su destino.
+
+Tres estados, solo uno visible a la vez (data-notifications-state): loading (skeleton), empty
+(mensaje centrado, sin tarjeta) y ready (la lista). Ojo: los contenedores con hidden no llevan
+utilidades d-* de Bootstrap, porque son !important y anularían hidden.
+{% endcomment %}
+<section class="pt-3" data-notifications data-notifications-url="{% url 'notifications-api:list' %}" aria-labelledby="ws-notifications-title">
+  <header class="mb-3">
+    <h1 class="h4 fw-bolder mb-0" id="ws-notifications-title">Avisos</h1>
+    <p class="small text-body-secondary mb-0">Comunicados y actividad de tus publicaciones.</p>
+  </header>
+
+  <div data-notifications-state="loading" aria-hidden="true">
+    <div class="d-grid gap-3">
+      {% for _ in "1234" %}
+        <div class="card border-0 shadow-sm rounded-4 placeholder-glow">
+          <div class="card-body d-flex gap-3">
+            <span class="placeholder rounded-3 ws-notice__icon"></span>
+            <div class="flex-grow-1"><span class="placeholder col-7 rounded-2 d-block mb-2"></span><span class="placeholder col-10 rounded-2 d-block"></span></div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="text-center text-body-secondary py-5 px-3" data-notifications-state="empty" hidden>
+    <i class="bx bx-bell-off display-5 text-primary" aria-hidden="true"></i>
+    <h2 class="h6 fw-bold text-body mt-2 mb-1">No tienes avisos</h2>
+    <p class="small mb-0">Aquí verás comunicados, actividad de tus publicaciones y más.</p>
+  </div>
+
+  <div class="text-center text-body-secondary py-5 px-3" data-notifications-state="error" hidden>
+    <i class="bx bx-error display-5 text-danger" aria-hidden="true"></i>
+    <h2 class="h6 fw-bold text-body mt-2 mb-1">No se pudieron cargar los avisos</h2>
+    <p class="small mb-0">Revisa tu conexión e inténtalo de nuevo.</p>
+  </div>
+
+  <div data-notifications-state="ready" hidden>
+    <ul class="list-unstyled mb-0 d-grid gap-3" data-notification-list aria-live="polite"></ul>
+    <div class="text-center my-3" data-notifications-more hidden>
+      <button type="button" class="btn btn-outline-primary btn-sm" data-notifications-next>Ver anteriores</button>
+    </div>
+  </div>
+</section>
+
+{# Un aviso (misma tarjeta para cualquier origen): ícono, título, descripción y fecha. No leído: tinte azul, negritas y punto (.is-unread). #}
+<template id="ws-notification-template">
+  <li class="ws-notification">
+    <div class="card border-0 shadow-sm rounded-4 text-body ws-notification__card" data-notification-card>
+      <div class="card-body d-flex align-items-start gap-3">
+        <span class="rounded-3 fs-4 ws-notice__icon ws-notification__tile" data-notification-tile aria-hidden="true"><i class="bx"></i></span>
+        <div class="flex-grow-1 min-w-0">
+          <div class="d-flex justify-content-between align-items-baseline gap-2">
+            <h2 class="h6 mb-1 ws-notification__title" data-notification-title></h2>
+            <span class="d-inline-flex align-items-center gap-2 flex-shrink-0">
+              <span class="ws-notification__dot" aria-hidden="true"></span>
+              <time class="small text-body-secondary text-nowrap" data-notification-time></time>
+            </span>
+          </div>
+          <p class="small text-body-secondary mb-0 ws-notification__body" data-notification-body></p>
+        </div>
+      </div>
+    </div>
+  </li>
+</template>
+{% endblock %}
+
+{% block extra_js %}
+  {% load static %}
+  <script src="{% static 'assets/js/notifications.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Calendario · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{% comment %}
+Calendario (solo frontend por ahora). FullCalendar (vendor/fullcalendar, MIT) dibuja Mes / Semana / Agenda;
+la barra es nuestra (Bootstrap) para no salirse del tema. calendar.js la conecta con el calendario.
+Aún no hay fechas del sistema (eventos, cumpleaños, avisos): el aviso lo dice y no se inventan datos.
+Teléfono: abre en «Agenda» (lista), que se lee mejor que una cuadrícula de 7 columnas en 360px.
+{% endcomment %}
+<section class="pt-3" aria-labelledby="ws-calendar-title">
+  <header class="mb-3">
+    <h1 class="h4 fw-bolder mb-0" id="ws-calendar-title">Calendario</h1>
+    <p class="small text-body-secondary mb-0">Eventos, cumpleaños y fechas importantes de la empresa.</p>
+  </header>
+
+  <div class="alert alert-primary border-0 rounded-4 d-flex align-items-start gap-2 small mb-3" role="status">
+    <i class="bx bx-info-circle fs-5 flex-shrink-0" aria-hidden="true"></i>
+    <span>El calendario aún no muestra las fechas del sistema. Pronto verás aquí eventos, cumpleaños y avisos con fecha.</span>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 ws-calendar-card">
+    <div class="ws-calendar-toolbar">
+      <h2 class="h5 fw-bold mb-0 ws-calendar-toolbar__title" data-calendar-title aria-live="polite"></h2>
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <div class="btn-group" role="group" aria-label="Cambiar periodo">
+          <button type="button" class="btn btn-sm btn-light border" data-calendar-nav="prev" aria-label="Periodo anterior"><i class="bx bx-chevron-left fs-5" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-sm btn-light border fw-semibold" data-calendar-nav="today">Hoy</button>
+          <button type="button" class="btn btn-sm btn-light border" data-calendar-nav="next" aria-label="Periodo siguiente"><i class="bx bx-chevron-right fs-5" aria-hidden="true"></i></button>
+        </div>
+        <div class="btn-group" role="group" aria-label="Vista">
+          <button type="button" class="btn btn-sm fw-semibold" data-calendar-view="dayGridMonth" aria-pressed="false">Mes</button>
+          <button type="button" class="btn btn-sm fw-semibold" data-calendar-view="timeGridWeek" aria-pressed="false">Semana</button>
+          <button type="button" class="btn btn-sm fw-semibold" data-calendar-view="listMonth" aria-pressed="false">Agenda</button>
+        </div>
+      </div>
+    </div>
+    <div class="ws-calendar" id="ws-calendar"></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+  {% load static %}
+  <script src="{% static 'assets/vendor/fullcalendar/index.global.min.js' %}" defer></script>
+  <script src="{% static 'assets/vendor/fullcalendar/locales/es.global.min.js' %}" defer></script>
+  <script src="{% static 'assets/js/calendar.js' %}" defer></script>
+{% endblock %}

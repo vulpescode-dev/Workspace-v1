@@ -1,0 +1,29 @@
+{# «Ver todo»: quién reaccionó a una publicación (Bootstrap Modal). reactions.js lo llena desde /api/social/posts/<id>/reactions/. #}
+<div class="modal fade" id="ws-reactions-modal" tabindex="-1" aria-labelledby="ws-reactions-title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-fullscreen-sm-down">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title h5 fw-bold" id="ws-reactions-title">Reacciones</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="d-flex flex-wrap gap-1 px-3 pt-3" data-reactions-summary></div>
+        <ul class="list-group list-group-flush mt-2" data-reactions-list></ul>
+        <div class="text-center py-4" data-reactions-loading>
+          <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando…</span></div>
+        </div>
+        <div class="text-center pb-3" data-reactions-more hidden>
+          <button type="button" class="btn btn-outline-primary btn-sm" data-reactions-next>Ver más</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<template id="ws-reaction-row-template">
+  <li class="list-group-item d-flex align-items-center gap-3">
+    <span class="ws-avatar rounded-circle d-inline-flex align-items-center justify-content-center fw-bold bg-primary-subtle text-primary" aria-hidden="true" data-row-initials></span>
+    <span class="flex-grow-1 fw-semibold text-truncate" data-row-name></span>
+    <span class="ws-emoji ws-emoji--24" data-row-emoji><img src="" alt="" width="24" height="24" loading="lazy"></span>
+  </li>
+</template>

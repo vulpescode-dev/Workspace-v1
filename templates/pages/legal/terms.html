@@ -1,0 +1,16 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Términos y condiciones · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{# Términos y condiciones. Pública (se enlaza desde el inicio de sesión). El texto lo redacta o revisa el área Legal. #}
+<section class="pt-3" aria-labelledby="ws-terms-title">
+  <header class="mb-3">
+    <h1 class="h4 fw-bolder mb-0" id="ws-terms-title">Términos y condiciones</h1>
+    <p class="small text-body-secondary mb-0">Reglas de uso de Workspace.</p>
+  </header>
+  {% include "components/feedback/empty_state.html" with icon="bx-file" title="Los términos están en preparación" description="El área Legal publicará aquí los términos y condiciones de uso." only %}
+</section>
+{% endblock %}

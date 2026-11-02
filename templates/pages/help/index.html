@@ -1,0 +1,16 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Ayuda · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{# Ayuda. Página en construcción (pide sesión): aquí irán guías y preguntas frecuentes. #}
+<section class="pt-3" aria-labelledby="ws-help-title">
+  <header class="mb-3">
+    <h1 class="h4 fw-bolder mb-0" id="ws-help-title">Ayuda</h1>
+    <p class="small text-body-secondary mb-0">Guías y respuestas para usar Workspace.</p>
+  </header>
+  {% include "components/feedback/empty_state.html" with icon="bx-help-circle" title="Ayuda está en construcción" description="Mientras tanto, si algo no funciona, escribe a Soporte TI." only %}
+</section>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Mesa de ayuda · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{# Mesa de ayuda. Página en construcción: la API (/api/helpdesk/) ya existe; la pantalla está pendiente (docs/backlog.md). #}
+<section class="pt-3" aria-labelledby="ws-helpdesk-title">
+  <header class="mb-3">
+    <h1 class="h4 fw-bolder mb-0" id="ws-helpdesk-title">Mesa de ayuda</h1>
+    <p class="small text-body-secondary mb-0">Incidencias y solicitudes para los departamentos de la empresa.</p>
+  </header>
+  {% include "components/feedback/empty_state.html" with icon="bx-support" title="Mesa de ayuda está en construcción" description="Pronto podrás levantar tickets y darles seguimiento desde aquí." only %}
+</section>
+{% endblock %}

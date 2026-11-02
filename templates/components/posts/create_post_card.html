@@ -1,0 +1,11 @@
+{# Tarjeta que abre el modal de nueva publicación. Variables: display_initials, display_avatar_url. #}
+<button type="button" class="card border-0 shadow-sm rounded-4 w-100 text-start mb-3 p-0 ws-create" data-bs-toggle="modal" data-bs-target="#ws-create-modal">
+  <span class="card-body d-flex align-items-center gap-3 w-100 pb-2">
+    {% include "components/ui/avatar.html" with initials=display_initials image_url=display_avatar_url only %}
+    <span class="form-control rounded-pill bg-body-tertiary border-0 text-body-secondary py-2">Compártenos tu día...</span>
+  </span>
+  <span class="card-footer bg-transparent d-flex w-100 small fw-semibold text-body-secondary">
+    <span class="flex-fill d-inline-flex align-items-center justify-content-center gap-1"><i class="bx bx-image fs-5 text-success" aria-hidden="true"></i> Foto</span>
+    <span class="flex-fill d-inline-flex align-items-center justify-content-center gap-1"><i class="bx bx-video fs-5 text-danger" aria-hidden="true"></i> Video</span>
+  </span>
+</button>

@@ -1,0 +1,42 @@
+{% comment %}
+El fondo blanco ocupa todo el ancho; el contenido va en un container alineado con .ws-shell (logo sobre el menú,
+acciones sobre el borde derecho del contenido). Acciones: campana, mi cuenta (avatar; con nombre en pantallas
+grandes) con un menú desplegable de Bootstrap, y en teléfono/tablet el botón del menú.
+{% endcomment %}
+<header class="navbar sticky-top bg-white shadow-sm ws-header">
+  <div class="container-fluid ws-header__container">
+    <a class="navbar-brand d-inline-flex align-items-center gap-1 fw-bold fs-5 m-0" href="{% url 'social:home' %}" aria-label="Workspace, ir al inicio">
+      <i class="bx bxl-xing fs-3 text-primary" aria-hidden="true"></i> Workspace
+    </a>
+    <div class="ws-header__actions">
+      {% if user.is_authenticated %}
+        {# Campana: por ahora solo lleva a la vista de notificaciones (el contador de no leídas está pendiente). #}
+        <a class="btn btn-light rounded-circle ws-icon-btn ws-bell{% if active_nav == "notifications" %} active{% endif %}" href="{% url 'notifications' %}" data-ws-bell aria-label="Notificaciones">
+          <i class="bx bx-bell fs-4" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown">
+          <button type="button" class="btn ws-header__me" data-bs-toggle="dropdown" data-bs-offset="0,8" aria-expanded="false" aria-label="Mi cuenta: {{ display_name }}">
+            {% include "components/ui/avatar.html" with initials=display_initials image_url=display_avatar_url size="sm" only %}
+            <span class="ws-header__me-name text-truncate">{{ display_name }}</span>
+            <i class="bx bx-chevron-down ws-header__me-chevron" aria-hidden="true"></i>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end ws-account-menu">
+            <a class="dropdown-item" href="{% url 'profile' %}"><i class="bx bx-user" aria-hidden="true"></i> Ver mi perfil</a>
+            {% if user.is_superuser %}
+              <a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bx bx-cog" aria-hidden="true"></i> Admin</a>
+            {% endif %}
+            <a class="dropdown-item" href="{% url 'help' %}"><i class="bx bx-help-circle" aria-hidden="true"></i> Ayuda</a>
+            <hr class="dropdown-divider">
+            <form method="post" action="{% url 'accounts:logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="dropdown-item text-danger"><i class="bx bx-log-out" aria-hidden="true"></i> Cerrar sesión</button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+      <button type="button" class="btn btn-light rounded-circle ws-icon-btn d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#ws-menu" aria-controls="ws-menu" aria-label="Abrir menú">
+        <i class="bx bx-menu fs-4" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,65 @@
+{% comment %}
+Tarjeta de publicación única para toda la app (Bootstrap card).
+Se usa dentro del template HTML "ws-post-template": feed.js la clona y rellena los
+[data-post-field] con lo que devuelve /api/social/posts/. Así la misma estructura
+sirve hoy con Django y mañana se traslada tal cual a un frontend separado.
+{% endcomment %}
+<article class="card border-0 shadow-sm rounded-4 mb-3 overflow-hidden ws-post" data-post-id="" data-reaction-host>
+  <div class="card-body pb-2">
+    <header class="d-flex align-items-start gap-3 mb-2">
+      <a class="flex-shrink-0" data-post-field="profile-link" tabindex="-1" aria-hidden="true">
+        <span class="ws-avatar rounded-circle d-inline-flex align-items-center justify-content-center fw-bold bg-primary-subtle text-primary" data-post-field="initials"></span>
+      </a>
+      <div class="flex-grow-1 min-w-0">
+        <a class="fw-bold lh-sm d-inline-block text-body text-decoration-none ws-author-link" data-post-field="author"></a>
+        <div class="small text-body-secondary">
+          <time data-post-field="time" data-ws-relative></time><span data-post-field="edited" hidden> · Editado</span> · <span data-post-field="audience" title="Toda la empresa"><i class="bx bx-globe" aria-hidden="true"></i><span class="visually-hidden">Toda la empresa</span></span>
+        </div>
+      </div>
+      {# Opciones: solo se muestran si eres el autor (is_mine). El servidor vuelve a validar. #}
+      <div class="dropdown" data-post-menu hidden>
+        <button type="button" class="btn btn-link text-body-secondary p-1 lh-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Opciones de la publicación">
+          <i class="bx bx-dots-horizontal-rounded fs-4" aria-hidden="true"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3">
+          <li><button type="button" class="dropdown-item d-flex align-items-center gap-2" data-post-edit><i class="bx bx-edit-alt fs-5" aria-hidden="true"></i> Editar</button></li>
+          <li><button type="button" class="dropdown-item d-flex align-items-center gap-2 text-danger" data-post-delete><i class="bx bx-trash fs-5" aria-hidden="true"></i> Eliminar</button></li>
+        </ul>
+      </div>
+    </header>
+    <div class="card-text ws-post__text" data-post-field="body"></div>
+    <form class="mt-2" data-post-edit-form novalidate hidden>
+      <textarea class="form-control ws-edit-text" rows="3" maxlength="5000" aria-label="Editar publicación"></textarea>
+      <div class="d-flex align-items-center justify-content-end gap-2 mt-2">
+        <select class="form-select form-select-sm w-auto me-auto" name="audience" aria-label="Quién puede verla">
+          <option value="company">Toda la empresa</option>
+          <option value="followers">Solo seguidores</option>
+        </select>
+        <button type="button" class="btn btn-light btn-sm" data-post-edit-cancel>Cancelar</button>
+        <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
+      </div>
+    </form>
+  </div>
+
+  {# Imágenes y videos (a todo el ancho de la tarjeta). Los pinta feed.js. #}
+  <div class="ws-post-media" data-post-media hidden></div>
+
+  <div class="card-body pt-2 pb-2">
+    {# Reacciones: pastillas (emoji + contador), botón para agregar y «Ver todo». Las pinta reactions.js. #}
+    <div class="d-flex flex-wrap align-items-center ws-reactions" data-post-reactions>
+      <div class="ws-reaction-chips" data-reaction-chips></div>
+      {# Sin reacciones muestra «Reaccionar»; con pastillas queda solo la carita (como Discord). #}
+      <button type="button" class="btn btn-sm ws-reaction-add" data-reaction-add aria-haspopup="dialog" aria-label="Reaccionar" title="Reaccionar">
+        <i class="bx bx-smile" aria-hidden="true"></i><span class="ws-reaction-add__label">Reaccionar</span>
+      </button>
+      <button type="button" class="btn btn-link btn-sm fw-semibold text-decoration-none ms-auto px-1" data-reactions-all hidden>Ver todo</button>
+    </div>
+  </div>
+
+  <div class="card-footer bg-transparent d-flex align-items-center gap-1 p-1">
+    <button type="button" class="btn btn-light bg-transparent border-0 flex-fill min-w-0 px-1 d-inline-flex align-items-center justify-content-center gap-1 fw-semibold small text-body-secondary text-nowrap ws-post__action" data-comments-open data-comments-focus>
+      <i class="bx bx-comment fs-5" aria-hidden="true"></i> Comentar
+    </button>
+    <button type="button" class="btn btn-light bg-transparent border-0 flex-fill min-w-0 px-1 fw-semibold small text-body-secondary text-nowrap ws-post__action" data-comments-open data-post-field="comments-count">0 comentarios</button>
+  </div>
+</article>

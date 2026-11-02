@@ -1,0 +1,856 @@
+/* ==========================================================================
+   Workspace — estilos propios (static/assets/css/theme.css)
+
+   Bootstrap 5.3 es la base (componentes y utilidades). Los colores de marca
+   y demás valores de Bootstrap se cambian en bootstrap-theme.css. Aquí solo
+   va lo que Bootstrap no tiene:
+     1. Tokens propios (--ws-*).
+     2. Estructura de la app: encabezado, barra inferior fija, áreas seguras.
+     3. Piezas sin equivalente en Bootstrap (accesos rápidos, avatar, texto de post).
+     4. Movimiento (guía Emil Kowalski): solo transform/opacity, curvas fuertes, < 300 ms.
+   Breakpoints propios: max-width 359px (teléfono estrecho).
+   ========================================================================== */
+
+/* 1. TOKENS ================================================================ */
+:root {
+  --ws-page-bg: #f5f6fa;             /* fondo de la página; las cards quedan blancas (Bootstrap) */
+  /* Modo oscuro (pendiente, aún no se implementa): --ws-page-bg: #19181a; */
+  --ws-content-width: 50rem;         /* tope del contenido en pantallas grandes */
+  --ws-shell-width: 80rem;           /* ancho de la app en pantallas grandes (encabezado y columnas) */
+  --ws-nav-height: 4.0625rem;
+  --ws-touch-target: 2.75rem;
+  --ws-z-nav: 1030;                  /* igual que .fixed-bottom de Bootstrap */
+  --ws-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ws-press-scale: 0.97;
+}
+
+/* 2. ESTRUCTURA ============================================================ */
+body { background-color: var(--ws-page-bg); }
+
+/* Scroll sin «salto» al abrir/cerrar modales y offcanvas.
+   - El espacio de la barra queda siempre reservado (scrollbar-gutter), haya o no scroll.
+   - Bootstrap, al ocultar el scroll, compensa con padding-right en <body> y margin-right en
+     .sticky-top/.fixed-*; con el espacio reservado eso sobra y es justo lo que movía el contenido.
+   - En teléfonos la barra ya flota sobre el contenido: nada de esto cambia allí. */
+html {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 102, 204, 0.35) transparent;
+}
+body { padding-right: 0 !important; }
+.sticky-top { margin-right: 0 !important; }
+.ws-app { min-height: 100vh; min-height: 100dvh; }
+.ws-content { padding-bottom: calc(var(--ws-nav-height) + env(safe-area-inset-bottom, 0px) + 1.5rem); }
+.ws-container { max-width: var(--ws-content-width); }
+
+.ws-header { padding-top: calc(0.5rem + env(safe-area-inset-top, 0px)); }
+.ws-header__container { padding-inline: 1rem; }
+.ws-icon-btn {
+  width: var(--ws-touch-target); height: var(--ws-touch-target);
+  display: inline-flex; align-items: center; justify-content: center; padding: 0;
+}
+.ws-offcanvas { --bs-offcanvas-width: min(20rem, 85vw); }
+
+/* Navegación inferior: barra de pestañas fija (Bootstrap no tiene una). */
+.ws-bottom-nav {
+  position: fixed; bottom: 0; left: 0; z-index: var(--ws-z-nav);
+  width: 100%;
+  height: calc(var(--ws-nav-height) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  display: flex; align-items: stretch;
+  background: var(--bs-white); border-radius: 1.5rem 1.5rem 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+}
+/* Indicador de la barra inferior: posición por CSS con --ws-nav-index (lo fija bottom_nav.html según la página). */
+.ws-bottom-nav__indicator {
+  position: absolute; top: 0; left: 0; width: 25%; height: 4px; pointer-events: none;
+  display: flex; justify-content: center;
+  transform: translateX(calc(var(--ws-nav-index, 0) * 100%));
+  transition: transform 250ms var(--ws-ease-out);
+}
+.ws-bottom-nav__indicator::after { content: ""; width: 40%; border-radius: 0 0 4px 4px; background: var(--bs-primary); }
+.ws-nav-item {
+  flex: 1; min-width: 0; border: 0; background: transparent;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem;
+  color: var(--bs-secondary-color);
+}
+.ws-nav-item i { font-size: 1.6rem; line-height: 1; }
+.ws-nav-item span { font-size: 0.7rem; font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ws-nav-item__on { display: none; }
+.ws-nav-item.is-active { color: var(--bs-primary); }
+.ws-nav-item.is-active .ws-nav-item__off { display: none; }
+.ws-nav-item.is-active .ws-nav-item__on { display: inline-block; }
+
+/* Avisos breves: encima de la barra inferior. */
+.ws-toast-container { bottom: calc(var(--ws-nav-height) + env(safe-area-inset-bottom, 0px) + 0.75rem); z-index: 1090; }
+
+/* 3. PIEZAS PROPIAS ======================================================== */
+.min-w-0 { min-width: 0; }
+
+.ws-categories { scrollbar-width: none; }
+.ws-categories::-webkit-scrollbar { display: none; }
+.ws-category { flex: 0 0 auto; min-width: 4.5rem; }
+.ws-category__icon { width: 4rem; height: 4rem; }
+.ws-category__label { font-size: 0.75rem; }
+/* Acciones del post: tres en una fila incluso a 360px. */
+.ws-post__action { flex-basis: 0; }
+
+.ws-avatar { width: 2.75rem; height: 2.75rem; flex: none; font-size: 0.95rem; }
+.ws-avatar--sm { width: 2.25rem; height: 2.25rem; font-size: 0.8rem; }
+.ws-avatar--lg { width: 3.75rem; height: 3.75rem; font-size: 1.4rem; }
+
+.ws-notice__icon { width: 2.75rem; height: 2.75rem; }
+
+/* La tarjeta "Crear publicación" es un <button>: quita el estilo nativo. */
+.ws-create { font: inherit; color: inherit; }
+
+/* Texto de publicación: respeta saltos de línea y parte palabras largas. */
+.ws-post__text { white-space: pre-line; overflow-wrap: anywhere; }
+
+/* Textarea que crece con el contenido (feed.js) hasta un tope. */
+.ws-create-text { min-height: 10rem; max-height: 60dvh; resize: none; }
+
+/* Botón Publicar: el texto se difumina y aparece el spinner en su lugar (mismo ancho). */
+.ws-submit { display: inline-grid; place-items: center; }
+.ws-submit > * { grid-area: 1 / 1; transition: opacity 160ms ease, filter 160ms ease; }
+.ws-submit__spinner { opacity: 0; }
+.is-sending .ws-submit__label { opacity: 0; filter: blur(2px); }
+.is-sending .ws-submit__spinner { opacity: 1; }
+
+/* Inicio de sesión. Móvil: encabezado de marca + tarjeta centrada en el alto visible; escritorio (≥ 992px): dos paneles.
+   Alto con dvh (100vh solo como respaldo): en el teléfono sigue a las barras del navegador que aparecen y se ocultan.
+   Entrada única al cargar (la página se ve pocas veces al día): fundido + 8px hacia arriba. */
+.ws-auth-page { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; background: var(--ws-page-bg); }
+.ws-auth-brand {
+  position: relative; overflow: hidden; color: #fff;
+  background: radial-gradient(28rem 20rem at 85% 0%, rgba(244, 198, 0, 0.35), transparent 60%),
+              linear-gradient(150deg, #0066cc 0%, #004f9f 60%, #0b2a55 100%);
+  padding: calc(env(safe-area-inset-top) + 1.5rem) 1.5rem 1.5rem;
+  border-radius: 0 0 2rem 2rem;
+}
+.ws-auth-brand__inner { max-width: 28rem; margin: 0 auto; }
+.ws-auth-brand__copy, .ws-auth-preview { display: none; }
+.ws-auth-logo { display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 800; font-size: 1.35rem; letter-spacing: -0.02em; }
+.ws-auth-logo i { font-size: 1.9rem; }
+.ws-auth-logo--form { display: none; color: var(--bs-primary); margin-bottom: 2rem; }
+/* flex: 1 ocupa el resto del alto (dvh) y align-items: center centra la tarjeta en ese espacio; si no cabe, el panel crece. */
+.ws-auth-panel { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1.5rem 1rem calc(env(safe-area-inset-bottom) + 1.5rem); }
+.ws-auth-card {
+  width: 100%; max-width: 26rem; align-self: center; background: #fff; border-radius: 1.5rem;
+  padding: 1.75rem 1.5rem; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 24px 48px -28px rgba(15, 23, 42, 0.35);
+  animation: ws-auth-enter 400ms var(--ws-ease-out) both;
+}
+.ws-auth-card.has-error { animation: ws-auth-shake 320ms var(--ws-ease-out); }
+@keyframes ws-auth-enter { from { opacity: 0; transform: translateY(8px); } }
+@keyframes ws-auth-shake { 25% { transform: translateX(-6px); } 55% { transform: translateX(4px); } 80% { transform: translateX(-2px); } }
+.ws-auth-alert { animation: ws-fade 200ms var(--ws-ease-out); }
+
+.ws-auth-field { position: relative; }
+.ws-auth-field .form-control { padding-left: 2.75rem; border-radius: 0.9rem; font-size: 1rem; min-height: 3.25rem; }
+.ws-auth-field .form-control:focus { border-color: var(--bs-primary); box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.15); }
+.ws-auth-field__icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.25rem; color: var(--bs-secondary-color); pointer-events: none; transition: color 150ms ease; }
+.ws-auth-field:focus-within .ws-auth-field__icon { color: var(--bs-primary); }
+.ws-auth-field__password { padding-right: 3.25rem; }
+.ws-auth-field .form-control.is-invalid { background-image: none; padding-right: 3.25rem; }
+.ws-auth-field__toggle {
+  position: absolute; right: 0.4rem; top: 50%; transform: translateY(-50%);
+  width: var(--ws-touch-target); height: var(--ws-touch-target); border: 0; border-radius: 0.7rem; background: transparent;
+  display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--bs-secondary-color);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.ws-auth-field__toggle:active { transform: translateY(-50%) scale(var(--ws-press-scale)); }
+@media (hover: hover) and (pointer: fine) { .ws-auth-field__toggle:hover { background: var(--bs-tertiary-bg); color: var(--bs-body-color); } }
+.ws-auth-caps { animation: ws-fade 150ms var(--ws-ease-out); }
+
+/* «Continuar con Google»: botón blanco con el logo oficial (lineamientos de marca de Google). */
+.ws-auth-google {
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem; min-height: 3.25rem; border-radius: 0.9rem;
+  background: #fff; border: 1px solid var(--bs-border-color); color: #1f1f1f; font-weight: 600;
+  transition: transform 160ms var(--ws-ease-out), background-color 150ms ease, border-color 150ms ease;
+}
+.ws-auth-google:active:not(:disabled) { transform: scale(var(--ws-press-scale)); }
+@media (hover: hover) and (pointer: fine) { .ws-auth-google:hover:not(:disabled) { background: #f8f9fb; border-color: #c7ccd4; } }
+.ws-auth-google:disabled { opacity: 0.55; }
+.ws-auth-google__logo { width: 1.25rem; height: 1.25rem; flex: none; }
+.ws-auth-divider { display: flex; align-items: center; gap: 0.75rem; margin: 1.5rem 0; color: var(--bs-secondary-color); font-size: 0.85rem; }
+.ws-auth-divider::before, .ws-auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--bs-border-color); }
+
+/* Botón: al enviar, el texto se desenfoca y aparece «Entrando…» en su lugar (sin brincos de tamaño). */
+.ws-auth-submit { position: relative; border-radius: 0.9rem; min-height: 3.25rem; transition: transform 160ms var(--ws-ease-out), background-color 150ms ease; }
+.ws-auth-submit:active { transform: scale(var(--ws-press-scale)); }
+.ws-auth-submit__label, .ws-auth-submit__loading { transition: opacity 200ms ease, filter 200ms ease; }
+.ws-auth-submit__loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 0.5rem; opacity: 0; filter: blur(2px); }
+.ws-auth-submit.is-loading { pointer-events: none; }
+.ws-auth-submit.is-loading .ws-auth-submit__label { opacity: 0; filter: blur(2px); }
+.ws-auth-submit.is-loading .ws-auth-submit__loading { opacity: 1; filter: none; }
+
+@media (min-width: 992px) {
+  .ws-auth-page { flex-direction: row; }
+  .ws-auth-brand { flex: 0 0 46%; border-radius: 0 2.5rem 2.5rem 0; padding: 3rem; display: flex; }
+  .ws-auth-brand__inner { display: flex; flex-direction: column; justify-content: space-between; width: 100%; max-width: 32rem; }
+  .ws-auth-brand__copy { display: block; }
+  .ws-auth-brand__title { font-size: clamp(2.25rem, 3.5vw, 3.25rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; }
+  .ws-auth-brand__text { font-size: 1.1rem; color: rgba(255, 255, 255, 0.78); margin: 0; }
+  .ws-auth-preview { display: grid; gap: 0.75rem; }
+  .ws-auth-chip {
+    display: flex; align-items: center; gap: 0.75rem; width: fit-content; max-width: 100%;
+    background: rgba(255, 255, 255, 0.96); color: var(--bs-body-color); border-radius: 1rem; padding: 0.7rem 1rem 0.7rem 0.7rem;
+    font-size: 0.9rem; box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.55);
+    animation: ws-auth-enter 500ms var(--ws-ease-out) both;
+  }
+  .ws-auth-chip__icon { width: 2.25rem; height: 2.25rem; border-radius: 0.7rem; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex: none; }
+  .ws-auth-chip--1 { animation-delay: 150ms; }
+  .ws-auth-chip--2 { animation-delay: 220ms; margin-left: 2.5rem; }
+  .ws-auth-chip--3 { animation-delay: 290ms; margin-left: 1rem; }
+  .ws-auth-panel { align-items: center; margin: 0; padding: 3rem; }
+  .ws-auth-card { align-self: center; box-shadow: none; background: transparent; padding: 0; }
+  .ws-auth-logo--form { display: none; }
+}
+
+/* Media del post (imágenes WebP y videos): a todo el ancho de la tarjeta. */
+.ws-post-media { display: grid; gap: 2px; background: var(--bs-secondary-bg); }
+.ws-post-media__item { position: relative; overflow: hidden; background: var(--bs-secondary-bg); aspect-ratio: 1; margin: 0 auto; }
+.ws-post-media__item img, .ws-post-media__item video { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* Fotos que abren la galería (lightbox.js): cursor de lupa y respuesta al presionar (solo la imagen, dentro de su celda). */
+.ws-post-media__item[role="button"] { cursor: zoom-in; }
+.ws-post-media__item[role="button"] img { transition: transform 160ms var(--ws-ease-out); }
+.ws-post-media__item[role="button"]:active img { transform: scale(0.98); }
+.ws-post-media__item[role="button"]:focus-visible { outline: 3px solid var(--bs-primary); outline-offset: -3px; }
+/* Galería (PhotoSwipe): fondo casi negro como Facebook; los videos centrados y sin salirse de la pantalla.
+   body .pswp: su CSS se carga después de este archivo, así que se sube la especificidad para ganarle. */
+body .pswp { --pswp-bg: #0b0d12; --pswp-placeholder-bg: #1c1f26; }
+body .pswp__counter { font-family: inherit; font-weight: 600; }
+.ws-lightbox-video { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 3.5rem 0 2rem; }
+.ws-lightbox-video video { max-width: 100%; max-height: 100%; background: #000; }
+.ws-post-media--1 .ws-post-media__item { aspect-ratio: 4 / 3; max-height: 32rem; }
+.ws-post-media--1 .ws-post-media__item video { object-fit: contain; background: #000; }
+.ws-post-media--2, .ws-post-media--4 { grid-template-columns: 1fr 1fr; }
+.ws-post-media--3 { grid-template-columns: 2fr 1fr; grid-template-rows: 1fr 1fr; }
+.ws-post-media--3 .ws-post-media__item:first-child { grid-row: span 2; aspect-ratio: auto; }
+.ws-post-media__more {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.45); color: #fff; font-size: 1.75rem; font-weight: 700; pointer-events: none;
+}
+
+/* Composer: miniaturas de los archivos elegidos. */
+.ws-attach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr)); gap: 0.5rem; }
+.ws-attach-grid:empty { display: none; }
+.ws-attach-tile { position: relative; aspect-ratio: 1; overflow: hidden; }
+.ws-attach-tile img, .ws-attach-tile video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ws-attach-tile__busy { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.ws-attach-tile__badge {
+  position: absolute; left: 0.375rem; bottom: 0.375rem; display: inline-flex; padding: 0.125rem;
+  border-radius: 50%; background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 1rem; pointer-events: none;
+}
+.ws-attach-tile__remove {
+  position: absolute; top: 0.25rem; right: 0.25rem; padding: 0.375rem;
+  background-color: rgba(0, 0, 0, 0.55); border-radius: 50%; opacity: 1; background-size: 0.6rem;
+}
+/* La miniatura nueva aparece con un fundido corto (enter: ease-out). */
+.ws-attach-tile { animation: ws-fade 180ms var(--ws-ease-out); }
+.ws-upload-progress { height: 3px; }
+.ws-upload-progress .progress-bar { transition: width 120ms linear; }
+
+/* Emojis (Noto): SVG estático; durante la animación Lottie se dibuja encima (.ws-emoji__stage). */
+.ws-emoji { position: relative; display: inline-flex; flex: none; }
+.ws-emoji img { display: block; width: 100%; height: 100%; }
+.ws-emoji--20 { width: 20px; height: 20px; }
+.ws-emoji--24 { width: 24px; height: 24px; }
+.ws-emoji--36 { width: 36px; height: 36px; }
+.ws-emoji__stage { position: absolute; inset: 0; pointer-events: none; }
+.ws-emoji.is-animating img { visibility: hidden; }
+
+/* Reacciones del post, al estilo Discord: pastillas compactas de la misma altura, alineadas a la
+   izquierda y que pasan de línea; emoji y número centrados en vertical. La tuya lleva borde azul. */
+.ws-reactions { gap: 0.375rem; }
+.ws-reaction-chips { display: contents; }
+.ws-reaction, .ws-reaction-add {
+  --bs-btn-padding-y: 0;
+  --bs-btn-padding-x: 0.5rem;
+  --bs-btn-border-width: 1px;
+  --bs-btn-border-radius: 0.5rem;
+  --bs-btn-bg: var(--bs-tertiary-bg);
+  --bs-btn-border-color: transparent;
+  --bs-btn-color: var(--bs-secondary-color);
+  --bs-btn-hover-bg: var(--bs-tertiary-bg);          /* en táctil no queda "pegado" el hover */
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-hover-color: var(--bs-secondary-color);
+  --bs-btn-active-bg: var(--bs-secondary-bg);
+  --bs-btn-active-border-color: transparent;
+  --bs-btn-active-color: var(--bs-body-color);
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem;
+  height: 2rem; line-height: 1;
+}
+.ws-reaction [data-reaction-count] {
+  font-size: 0.875rem; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 0.6em; text-align: left;
+}
+.ws-reaction.is-mine {
+  --bs-btn-bg: var(--bs-primary-bg-subtle);
+  --bs-btn-border-color: var(--bs-primary);
+  --bs-btn-color: var(--bs-primary-text-emphasis);
+  --bs-btn-hover-bg: var(--bs-primary-bg-subtle);
+  --bs-btn-hover-border-color: var(--bs-primary);
+  --bs-btn-hover-color: var(--bs-primary-text-emphasis);
+  --bs-btn-active-bg: var(--bs-primary-bg-subtle);
+  --bs-btn-active-border-color: var(--bs-primary);
+  --bs-btn-active-color: var(--bs-primary-text-emphasis);
+}
+@media (hover: hover) and (pointer: fine) {
+  .ws-reaction:hover, .ws-reaction-add:hover { --bs-btn-hover-bg: var(--bs-secondary-bg); --bs-btn-hover-border-color: var(--bs-border-color); }
+  .ws-reaction.is-mine:hover { --bs-btn-hover-bg: #b8d4f0; --bs-btn-hover-border-color: var(--bs-primary); }
+}
+/* Botón para reaccionar: «carita Reaccionar» sin reacciones; solo la carita cuando ya hay pastillas. */
+.ws-reaction-add i { font-size: 1.25rem; }
+.ws-reaction-add__label { font-size: 0.875rem; font-weight: 600; }
+.ws-reactions.has-reactions .ws-reaction-add__label { display: none; }
+
+/* Selector de emojis: hoja inferior con cuadrícula. */
+.ws-emoji-picker {
+  --bs-offcanvas-height: min(60dvh, 26rem);
+  --bs-offcanvas-transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);  /* curva tipo iOS para hojas */
+}
+.ws-emoji-picker .offcanvas-header, .ws-emoji-picker .offcanvas-body { width: 100%; margin-inline: auto; }
+.ws-emoji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(3rem, 1fr)); gap: 0.25rem; }
+.ws-emoji-option {
+  --bs-btn-padding-x: 0;
+  --bs-btn-padding-y: 0;
+  --bs-btn-border-color: transparent;
+  --bs-btn-hover-border-color: transparent;
+  --bs-btn-active-bg: var(--bs-secondary-bg);
+  --bs-btn-active-border-color: transparent;
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 0.75rem;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ws-emoji-option:hover { --bs-btn-hover-bg: var(--bs-tertiary-bg); }
+}
+.ws-emoji-option.is-selected { background: var(--bs-primary-bg-subtle); box-shadow: inset 0 0 0 1px var(--bs-primary-border-subtle); }
+
+/* 4. MOVIMIENTO ============================================================ */
+/* Respuesta al presionar: el control confirma que escuchó al usuario. */
+.btn, .ws-create, .ws-category__icon {
+  transition: transform 160ms var(--ws-ease-out), color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.btn:active:not(:disabled), .ws-create:active, .ws-category:active .ws-category__icon {
+  transform: scale(var(--ws-press-scale));
+}
+
+/* Publicación recién creada: entra desde 8px abajo, nunca desde la nada. */
+.ws-post--new { animation: ws-post-enter 260ms var(--ws-ease-out); }
+@keyframes ws-post-enter {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+}
+@keyframes ws-fade { from { opacity: 0; } }
+
+/* Salida (eliminar post o comentario): más rápida que la entrada (Emil: exit < enter). */
+.ws-leaving { animation: ws-leave 160ms var(--ws-ease-out) forwards; pointer-events: none; }
+@keyframes ws-leave {
+  to { opacity: 0; transform: scale(0.98); }
+}
+
+/* Comentarios: respuestas, eliminado y reacciones compactas. */
+.ws-comment__replies:empty { display: none; }
+.ws-comment.is-deleted > div > div > .ws-comment__bubble { font-style: italic; color: var(--bs-secondary-color); }
+.ws-comment.is-deleted > div > div > .ws-comment__meta,
+.ws-comment.is-deleted > div > div > .ws-reactions { display: none; }
+.ws-reactions--sm { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; }
+.ws-reactions--sm:not(.has-reactions) { display: none; }
+.ws-reactions--sm .ws-reaction { height: 1.625rem; --bs-btn-padding-x: 0.375rem; gap: 0.25rem; }
+.ws-reactions--sm .ws-emoji--20 { width: 16px; height: 16px; }
+.ws-reactions--sm [data-reaction-count] { font-size: 0.75rem; }
+.ws-edit-text { resize: none; }
+/* Sin utilidades d-flex: Bootstrap las marca !important y anularían el atributo hidden. */
+.ws-reply-banner { display: flex; align-items: center; gap: 0.5rem; }
+.ws-reply-banner[hidden] { display: none; }
+
+/* Capas: el selector de emojis y la confirmación pueden abrirse encima del modal de comentarios. */
+.ws-emoji-picker { z-index: 1070; }
+.modal-open .offcanvas-backdrop { z-index: 1065; }
+.ws-confirm-modal { z-index: 1080; }
+.modal-backdrop + .modal-backdrop { z-index: 1075; }
+
+/* Avatar con foto (Workspace.fillAvatar la pone de fondo). */
+.ws-avatar.has-image { background-size: cover; background-position: center; color: transparent; }
+.ws-author-link:hover { text-decoration: underline !important; }
+
+/* ===== Perfil =====
+   Teléfono: portada + avatar centrado encima + pestañas Publicaciones / Fotos / Información.
+   Pantallas grandes: ver «Perfil en pantallas grandes» (sección 4). */
+.ws-avatar--xl { width: 7.5rem; height: 7.5rem; font-size: 2.5rem; }
+
+/* Portada estática (igual para todos): degradado de marca. Para usar una imagen de la empresa,
+   agregar aquí esa imagen (assets/img/profile-cover.webp) como primera capa del fondo con url(). */
+.ws-profile-cover {
+  position: relative; aspect-ratio: 16 / 7; max-height: 20rem; overflow: hidden;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(244, 198, 0, 0.35), transparent 40%),
+    linear-gradient(135deg, #0066cc, #3d8fe0);
+}
+
+.ws-profile-head { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.75rem; }
+.ws-profile-avatar-wrap { position: relative; margin-top: -3.75rem; }   /* la mitad del avatar sobre la portada */
+.ws-profile-avatar { border: 4px solid var(--bs-body-bg); box-shadow: var(--bs-box-shadow-sm); }
+.ws-profile-avatar__edit { position: absolute; right: 0; bottom: 0.25rem; width: 2.25rem; height: 2.25rem; }
+.ws-profile-identity { min-width: 0; }
+.ws-profile-identity .placeholder { min-height: 1em; }
+.ws-profile-bio { white-space: pre-line; overflow-wrap: anywhere; }
+.ws-profile-birthday { display: flex; align-items: center; justify-content: center; gap: 0.35rem; }
+.ws-profile-birthday[hidden] { display: none; }
+
+/* Subiendo foto: la vista previa se ve atenuada con un pulso suave. */
+.ws-profile-avatar.is-uploading { animation: ws-pulse 1s ease-in-out infinite alternate; }
+@keyframes ws-pulse { from { opacity: 1; } to { opacity: 0.55; } }
+
+/* Pestañas: solo se ve el panel elegido. */
+[data-profile]:not([data-tab="posts"]) [data-profile-panel="posts"],
+[data-profile]:not([data-tab="photos"]) [data-profile-panel="photos"],
+[data-profile]:not([data-tab="info"]) [data-profile-panel="info"],
+[data-profile]:not([data-tab="people"]) [data-profile-panel="people"] { display: none; }
+
+/* Filas de «Información» y botones con ícono que se ocultan: display propio (las utilidades
+   d-*flex de Bootstrap son !important y anularían el atributo hidden). */
+.ws-info-row { display: flex; gap: 1rem; }
+.ws-btn-icon { display: inline-flex; align-items: center; gap: 0.5rem; }
+.ws-info-row[hidden], .ws-btn-icon[hidden] { display: none; }
+
+/* Seguir: mismo ancho en «Seguir» y «Siguiendo» para que el botón no salte al cambiar. */
+.ws-profile-actions { display: flex; justify-content: center; gap: 0.5rem; }
+.ws-follow-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; min-width: 7.5rem; }
+.ws-follow-btn[hidden], .ws-profile-actions [hidden] { display: none; }
+.ws-profile-stats { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.375rem; }
+.ws-person { display: flex; align-items: center; gap: 0.75rem; }
+.ws-person .ws-follow-btn { min-width: 6.5rem; }
+
+/* Buscar (/search/). Misma jerarquía que el resto: tarjeta blanca; el campo usa el gris de
+   «Compártenos tu día…» y los filtros van subrayados bajo una línea, como las pestañas del perfil.
+   Cambiar de filtro no se anima (se usa a cada rato): solo hay respuesta al presionar. */
+.ws-search-card { padding: 1rem 1rem 0; }
+.ws-search-form {
+  display: flex; align-items: center; padding: 0.375rem; border-radius: 50rem;
+  background: var(--bs-tertiary-bg); border: 1px solid transparent;
+  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+.ws-search-form:focus-within {
+  background: var(--bs-white); border-color: rgba(var(--bs-primary-rgb), 0.5); box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.15);
+}
+.ws-search-form__icon { flex: none; margin: 0 0.125rem 0 0.75rem; }
+.ws-search-form__input { min-width: 0; border: 0; background: transparent; box-shadow: none !important; padding: 0.5rem; font-size: 1rem; }
+.ws-search-form__submit { flex: none; }
+.ws-search-scopes {
+  display: flex; gap: 0.25rem; margin: 1rem -1rem 0; padding: 0 0.5rem; overflow-x: auto; scrollbar-width: none;
+  border-top: 1px solid var(--bs-border-color-translucent);
+}
+.ws-search-scopes::-webkit-scrollbar { display: none; }
+.ws-search-scope {
+  position: relative; flex: none; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.75rem 0.85rem;
+  border: 0; background: transparent; color: var(--bs-secondary-color); font-size: 0.9rem; font-weight: 600;
+  transition: color 150ms ease, transform 160ms var(--ws-ease-out);
+}
+.ws-search-scope i { font-size: 1.15rem; }
+.ws-search-scope:active { transform: scale(var(--ws-press-scale)); }
+.ws-search-scope.is-active { color: var(--bs-primary); }
+.ws-search-scope.is-active::after {
+  content: ""; position: absolute; left: 0.5rem; right: 0.5rem; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--bs-primary);
+}
+
+/* Explorar: accesos a cada sección (lista en teléfono, cuadrícula en pantallas grandes). */
+.ws-explore-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.75rem; }
+.ws-explore-card {
+  display: flex; align-items: center; gap: 0.875rem; min-width: 0; padding: 1rem;
+  background: var(--bs-white); border-radius: var(--bs-border-radius-xl); box-shadow: var(--bs-box-shadow-sm);
+  color: inherit; text-decoration: none; transition: box-shadow 150ms ease, transform 160ms var(--ws-ease-out);
+}
+.ws-explore-card:active { transform: scale(var(--ws-press-scale)); }
+.ws-explore-card__icon { flex: none; display: flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; border-radius: 1rem; font-size: 1.5rem; }
+.ws-explore-card__title { display: block; font-weight: 700; }
+.ws-explore-card__text { display: block; font-size: 0.85rem; color: var(--bs-secondary-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (hover: hover) and (pointer: fine) {
+  .ws-search-scope:not(.is-active):hover { color: var(--bs-body-color); }
+  .ws-explore-card:hover { box-shadow: var(--bs-box-shadow); }
+}
+@media (min-width: 576px) { .ws-explore-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Calendario (FullCalendar con nuestro tema). La barra es de Bootstrap; aquí solo se ajusta el calendario
+   a los colores y pesos del tema mediante sus variables --fc-* y unas pocas clases. */
+.ws-calendar-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 1rem; }
+.ws-calendar-toolbar__title { min-width: 0; }
+.ws-calendar {
+  --fc-border-color: var(--bs-border-color-translucent);
+  --fc-page-bg-color: var(--bs-white);
+  --fc-neutral-bg-color: var(--bs-tertiary-bg);
+  --fc-today-bg-color: color-mix(in srgb, var(--bs-primary) 5%, var(--bs-white));
+  --fc-event-bg-color: var(--bs-primary);
+  --fc-event-border-color: var(--bs-primary);
+  --fc-list-event-hover-bg-color: var(--bs-tertiary-bg);
+  --fc-now-indicator-color: var(--bs-danger);
+  font-size: 0.875rem;
+}
+.ws-calendar a { color: inherit; text-decoration: none; }
+.ws-calendar .fc-theme-standard .fc-scrollgrid { border-left: 0; border-right: 0; }
+.ws-calendar .fc-theme-standard td:first-child, .ws-calendar .fc-theme-standard th:first-child { border-left: 0; }
+.ws-calendar .fc-theme-standard td:last-child, .ws-calendar .fc-theme-standard th:last-child { border-right: 0; }
+.ws-calendar .fc-col-header-cell-cushion { padding: 0.5rem 0.25rem; font-size: 0.75rem; font-weight: 600; color: var(--bs-secondary-color); text-transform: capitalize; }
+.ws-calendar .fc-daygrid-day-number { margin: 0.25rem; padding: 0.2rem 0.45rem; min-width: 1.75rem; border-radius: 50rem; text-align: center; font-weight: 600; }
+.ws-calendar .fc-day-today .fc-daygrid-day-number { background: var(--bs-primary); color: var(--bs-white); }
+.ws-calendar .fc-daygrid-day-frame { min-height: 5.5rem; }
+.ws-calendar .fc-list { border: 0; }
+.ws-calendar .fc-list-empty { background: transparent; color: var(--bs-secondary-color); padding: 3rem 1rem; }
+.ws-calendar .fc-timegrid-slot-label-cushion, .ws-calendar .fc-timegrid-axis-cushion { font-size: 0.75rem; color: var(--bs-secondary-color); }
+.ws-calendar .fc-scrollgrid-section-body > td, .ws-calendar .fc-list { border-bottom-left-radius: var(--bs-border-radius-xl); border-bottom-right-radius: var(--bs-border-radius-xl); }
+.ws-calendar-card { overflow: hidden; }
+
+/* Enlaces legales (pie del menú y del inicio de sesión): texto pequeño y gris, separados por «·». */
+.ws-legal-links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.5rem; font-size: 0.8rem; color: var(--bs-tertiary-color); }
+.ws-legal-links a { color: inherit; text-decoration: none; }
+.ws-legal-links a:focus-visible { text-decoration: underline; }
+@media (hover: hover) and (pointer: fine) { .ws-legal-links a:hover { color: var(--bs-body-color); text-decoration: underline; } }
+.ws-sidebar__footer { padding: 1.25rem 1rem 1rem; }   /* alineado con las etiquetas «Principal» / «Cuenta» */
+.ws-auth-legal { justify-content: center; margin-top: 1.5rem; }
+/* Emojis animados del inicio de sesión: mismo tamaño para el SVG fijo y para el de lottie (sin saltos). */
+.ws-auth-emoji { display: inline-flex; flex: none; width: 1.75rem; height: 1.75rem; }
+.ws-auth-emoji img, .ws-auth-emoji svg { width: 100% !important; height: 100% !important; }
+.ws-auth-emoji.is-animated img { display: none; }
+.ws-auth-emoji--title { width: 2rem; height: 2rem; }
+
+/* Encabezado de página: título con su dato secundario debajo; en pantallas grandes, el buscador a la derecha. */
+.ws-page-head { display: flex; flex-direction: column; gap: 0.75rem; }
+
+/* Botón suave (Bootstrap no lo tiene): para acciones que se repiten en una lista y no deben competir
+   con el contenido, como «Seguir» en cada tarjeta del directorio (igual que «Agregar» en Facebook). */
+.ws-btn-soft {
+  --bs-btn-color: var(--bs-primary); --bs-btn-bg: var(--bs-primary-bg-subtle); --bs-btn-border-color: transparent;
+  --bs-btn-hover-color: var(--bs-primary); --bs-btn-hover-bg: rgba(var(--bs-primary-rgb), 0.18); --bs-btn-hover-border-color: transparent;
+  --bs-btn-active-color: var(--bs-primary); --bs-btn-active-bg: rgba(var(--bs-primary-rgb), 0.24); --bs-btn-active-border-color: transparent;
+}
+
+/* Directorio: tarjetas en cuadrícula (2 columnas en teléfono; más si cabe).
+   Jerarquía: nombre › cargo › área (etiqueta) › acción. Una línea por texto (con «…» y title=):
+   así todas las tarjetas miden lo mismo y la acción queda siempre abajo, alineada en la fila. */
+.ws-people-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 0.75rem; }
+.ws-people-grid:empty, .ws-people-grid[hidden] { display: none; }
+.ws-people-count:empty { display: none; }
+.ws-person-card { display: flex; flex-direction: column; min-width: 0; animation: ws-fade 180ms var(--ws-ease-out); transition: box-shadow 150ms ease; }
+.ws-person-card__link {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+  min-width: 0; padding: 1.25rem 0.875rem 0.75rem; text-align: center;
+}
+.ws-person-card__link > * { max-width: 100%; }
+.ws-person-card__avatar { width: 4.5rem; height: 4.5rem; font-size: 1.5rem; margin-bottom: 0.5rem; }
+.ws-person-card__name { font-size: 1rem; font-weight: 700; margin: 0; }
+.ws-person-card__title { font-size: 0.85rem; color: var(--bs-secondary-color); margin: 0; }
+.ws-person-card__dept {
+  margin-top: 0.35rem; padding: 0.2rem 0.65rem; border-radius: 50rem;
+  font-size: 0.75rem; font-weight: 600; background: var(--bs-tertiary-bg); color: var(--bs-secondary-color);
+}
+.ws-person-card__dept[hidden] { display: none; }
+.ws-person-card__actions { padding: 0 0.875rem 0.875rem; }
+.ws-person-card .ws-follow-btn { min-width: 0; }
+.ws-person-card__btn-placeholder { display: block; height: 2.1rem; }
+@media (hover: hover) and (pointer: fine) {
+  .ws-person-card:hover { box-shadow: var(--bs-box-shadow) !important; }
+}
+
+/* Pestañas del perfil. Teléfono: píldoras en una fila que se desplaza de lado si no caben.
+   Cambiar de pestaña no se anima (se usa a cada rato); solo hay respuesta al presionar. */
+.ws-profile-tabs { padding: 0 0.75rem 1rem; }
+.ws-profile-tabs__list { flex-wrap: nowrap; gap: 0; overflow-x: auto; scrollbar-width: none; }
+.ws-profile-tabs__list::-webkit-scrollbar { display: none; }
+.ws-profile-tabs__list .nav-link {
+  flex: 1 0 auto; padding: 0.5rem 0.55rem; border-radius: 999px; font-weight: 600; font-size: 0.85rem; white-space: nowrap;
+  color: var(--bs-secondary-color); transition: background-color 150ms ease, color 150ms ease, transform 160ms var(--ws-ease-out);
+}
+.ws-profile-tabs__list .nav-link.active { background: var(--bs-primary); color: #fff; }
+.ws-profile-tabs__list .nav-link:active { transform: scale(var(--ws-press-scale)); }
+@media (hover: hover) and (pointer: fine) {
+  .ws-profile-tabs__list .nav-link:not(.active):hover { background: var(--bs-tertiary-bg); color: var(--bs-body-color); }
+}
+
+/* «Todo»: en el teléfono solo publicaciones; la columna de resumen aparece en pantallas grandes. */
+.ws-profile-all__side { display: none; }
+.ws-photo-grid--preview { border-radius: 0.75rem; overflow: hidden; }
+.ws-photo-grid--preview:empty { display: none; }
+
+/* Interruptor Seguidores / Seguidos (pestaña «Seguidores»). */
+.ws-segmented { display: inline-flex; gap: 0.25rem; padding: 0.25rem; border-radius: 999px; background: var(--bs-tertiary-bg); }
+.ws-segmented button {
+  border: 0; background: transparent; border-radius: 999px; padding: 0.4rem 0.9rem; font-weight: 600; font-size: 0.875rem;
+  color: var(--bs-secondary-color); display: inline-flex; align-items: center; gap: 0.4rem;
+  transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease, transform 160ms var(--ws-ease-out);
+}
+.ws-segmented button:active { transform: scale(var(--ws-press-scale)); }
+.ws-segmented button.active { background: var(--bs-white); color: var(--bs-body-color); box-shadow: var(--bs-box-shadow-sm); }
+.ws-segmented__count { font-size: 0.75rem; color: var(--bs-secondary-color); }
+.ws-press { transition: transform 160ms var(--ws-ease-out), background-color 150ms ease; }
+.ws-press:active { transform: scale(var(--ws-press-scale)); }
+
+/* Fotos del perfil: cuadrícula de 3 columnas, cuadradas, separadas por 2px (como las galerías móviles). */
+.ws-photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.ws-photo-grid:empty { display: none; }
+.ws-photo-grid__item { display: block; aspect-ratio: 1; overflow: hidden; background: var(--bs-secondary-bg); }
+.ws-photo-grid__item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 200ms var(--ws-ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .ws-photo-grid__item:hover img { transform: scale(1.03); }
+}
+.ws-photo-grid__item:active img { transform: scale(0.98); }
+
+
+/* Encabezado: campana con globo de no leídas. */
+.ws-header__actions { display: flex; align-items: center; gap: 0.5rem; }
+
+/* Mi cuenta en el encabezado: avatar (y nombre en pantallas grandes) que abre un menú desplegable.
+   Movimiento: el menú crece desde su esquina (arriba a la derecha, donde está el botón), 180ms ease-out;
+   al cerrar desaparece sin animación (Bootstrap), así responde al instante. */
+.ws-header__me {
+  display: inline-flex; align-items: center; gap: 0.5rem; min-height: var(--ws-touch-target);
+  padding: 0.25rem; border: 0; border-radius: 50rem; color: var(--bs-body-color);
+  transition: background-color 150ms ease, transform 160ms var(--ws-ease-out);
+}
+.ws-header__me:active { transform: scale(var(--ws-press-scale)); }
+.ws-header__me[aria-expanded="true"] { background: var(--bs-tertiary-bg); }
+.ws-header__me-name, .ws-header__me-chevron { display: none; }
+.ws-account-menu {
+  min-width: 16rem; padding: 0.5rem; border: 0; border-radius: var(--bs-border-radius-xl); box-shadow: var(--bs-box-shadow);
+  --bs-dropdown-link-active-bg: var(--bs-primary-bg-subtle); --bs-dropdown-link-active-color: var(--bs-primary);
+}
+.ws-account-menu.show { transform-origin: top right; animation: ws-menu-in 180ms var(--ws-ease-out); }
+@keyframes ws-menu-in { from { opacity: 0; transform: scale(0.96); } }
+.ws-account-menu .dropdown-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 0.75rem; font-weight: 600; }
+.ws-account-menu .dropdown-item i { font-size: 1.25rem; color: var(--bs-tertiary-color); }
+.ws-account-menu .dropdown-item.text-danger i { color: inherit; }
+.ws-account-menu .dropdown-divider { margin: 0.375rem 0.25rem; }
+@media (hover: hover) and (pointer: fine) { .ws-header__me:hover { background: var(--bs-tertiary-bg); } }
+@media (min-width: 992px) {
+  .ws-header__me { padding: 0.25rem 0.75rem 0.25rem 0.25rem; }
+  .ws-header__me-name { display: inline; max-width: 12rem; font-weight: 600; }
+  .ws-header__me-chevron { display: inline; color: var(--bs-tertiary-color); }
+}
+
+/* Avisos (= notificaciones): una tarjeta por aviso, como el diseño de referencia.
+   Ícono de color, título, descripción y fecha. Jerarquía: lo no leído resalta primero (tinte azul
+   muy suave, título en negritas y punto azul); lo leído baja a seminegrita sobre blanco. */
+.ws-notification__card-link { display: block; color: inherit; text-decoration: none; border-radius: var(--bs-border-radius-xl); }
+.ws-notification__card { transition: transform 160ms var(--ws-ease-out), box-shadow 160ms ease; }
+.ws-notification__card-link:active .ws-notification__card { transform: scale(var(--ws-press-scale)); }
+@media (hover: hover) and (pointer: fine) {
+  .ws-notification__card-link:hover .ws-notification__card { box-shadow: var(--bs-box-shadow) !important; }
+}
+.ws-notification__tile { display: flex; flex: none; align-items: center; justify-content: center; }
+.ws-notification__body { overflow-wrap: anywhere; }
+.ws-notification__dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: transparent; }
+.ws-notification.is-unread .ws-notification__dot { background: var(--bs-primary); }
+.ws-notification__title { font-weight: 600; }
+.ws-notification.is-unread .ws-notification__title { font-weight: 700; }
+/* Mezcla con blanco (no transparencia): la tarjeta sigue siendo opaca sobre el fondo gris de la página. */
+.ws-notification.is-unread .ws-notification__card { --bs-card-bg: color-mix(in srgb, var(--bs-primary) 6%, var(--bs-white)); }
+
+/* Comentario al que llevó una notificación: un destello suave que se desvanece. */
+.ws-comment--highlight > div > div > .ws-comment__bubble { animation: ws-highlight 1800ms ease-out; }
+@keyframes ws-highlight {
+  0%, 30% { box-shadow: 0 0 0 3px var(--bs-primary-border-subtle); background-color: var(--bs-primary-bg-subtle); }
+}
+
+/* Comentario recién enviado: fundido corto. */
+.ws-comment--new { animation: ws-fade 180ms var(--ws-ease-out); }
+.ws-comment-input { resize: none; max-height: 10rem; }
+
+/* Pastilla nueva: crece desde 0.9 con fundido (nunca desde la nada). */
+.ws-reaction--new { animation: ws-chip-enter 200ms var(--ws-ease-out); }
+@keyframes ws-chip-enter {
+  from { opacity: 0; transform: scale(0.9); }
+}
+
+@media (max-width: 359px) {
+  :root { --ws-nav-height: 3.75rem; }
+  .ws-nav-item span { font-size: 0.625rem; letter-spacing: -0.02em; }
+  .ws-category__icon { width: 3.5rem; height: 3.5rem; }
+}
+
+/* 4. PANTALLAS GRANDES ===================================================== */
+/* Menú (offcanvas-lg) — piezas que solo existen en su versión de columna fija. */
+.ws-sidebar__desktop-only { display: none; }
+.ws-sidebar__nav .list-group-item i { color: var(--bs-tertiary-color); }
+.ws-sidebar__nav .is-current { color: var(--bs-primary); font-weight: 700; }
+.ws-sidebar__nav .is-current i { color: var(--bs-primary); }
+
+/* Widgets de la columna 3 (Inicio, ≥ 1200px). Cada uno: skeleton → vacío → lista. */
+.ws-aside { display: none; }
+.ws-widget { min-width: 0; background: var(--bs-white); border-radius: var(--bs-border-radius-xl); box-shadow: var(--bs-box-shadow-sm); padding: 1rem; }
+.ws-widget__title { font-size: 0.95rem; font-weight: 700; margin: 0; }
+/* minmax(0, 1fr): las filas no crecen con textos largos («Coordinadora de Capital Humano»); se recortan con «…». */
+.ws-widget__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.25rem; }
+.ws-widget__list[hidden], .ws-widget__state[hidden] { display: none; }
+.ws-widget__item {
+  display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem; margin: 0 -0.5rem; border-radius: 0.75rem;
+  color: inherit; text-decoration: none; animation: ws-fade 180ms var(--ws-ease-out);
+}
+a.ws-widget__item { transition: background-color 150ms ease; }
+@media (hover: hover) and (pointer: fine) { a.ws-widget__item:hover { background: var(--bs-tertiary-bg); } }
+.ws-widget__item .ws-avatar { width: 2.5rem; height: 2.5rem; font-size: 0.85rem; }
+.ws-widget__state { font-size: 0.85rem; color: var(--bs-secondary-color); padding: 0.25rem 0; margin: 0; }
+.ws-birthday.is-today { background: linear-gradient(100deg, rgba(var(--bs-secondary-rgb), 0.22), rgba(var(--bs-secondary-rgb), 0.06)); }
+.ws-birthday__date {
+  flex: none; min-width: 3.25rem; text-align: center; font-size: 0.75rem; font-weight: 700; line-height: 1.1;
+  padding: 0.35rem 0.4rem; border-radius: 0.6rem; background: var(--bs-tertiary-bg); color: var(--bs-secondary-color);
+}
+.ws-birthday.is-today .ws-birthday__date { background: var(--bs-secondary); color: var(--bs-secondary-text-emphasis); }
+.ws-widget .ws-notice__icon { width: 2.5rem; height: 2.5rem; flex: none; }
+.ws-widget .btn-sm { --bs-btn-padding-y: 0.3rem; --bs-btn-padding-x: 0.7rem; }
+
+@media (min-width: 992px) {
+  :root { --ws-header-height: 3.75rem; }   /* alto real del encabezado (60px) */
+  .ws-shell {
+    display: grid; grid-template-columns: 15.5rem minmax(0, 1fr); gap: 2rem; align-items: start;
+    max-width: var(--ws-shell-width); margin: 0 auto; padding: 0 1.5rem;
+  }
+  /* Encabezado alineado con la cuadrícula: el logo arriba del menú y las acciones en el borde del contenido. */
+  .ws-header__container { max-width: var(--ws-shell-width); padding-inline: 1.5rem; }
+  /* Páginas sin menú lateral (como el perfil de Facebook): una sola columna centrada.
+     El menú sigue en el teléfono (barra inferior y panel); aquí se vuelve con el logo. */
+  .ws-shell.no-sidebar { grid-template-columns: minmax(0, 1fr); }
+  .ws-shell.no-sidebar > .ws-sidebar { display: none; }
+  /* Mismo container que el encabezado en todas las páginas: el contenido ocupa todo el ancho de la app. */
+  .ws-shell.no-sidebar .ws-container { max-width: none; }
+  .ws-content { padding-bottom: 2.5rem; }
+  .ws-container { max-width: 42rem; padding-inline: 0 !important; }
+  .ws-bottom-nav { display: none; }
+  .ws-toast-container { bottom: 1.5rem; }
+
+  /* Columna 1: el menú queda fijo mientras se desplaza el contenido (sin animación: se usa a cada rato). */
+  .ws-sidebar {
+    position: sticky; top: calc(var(--ws-header-height) + 1rem); max-height: calc(100dvh - var(--ws-header-height) - 2rem);
+    overflow-y: auto; overflow-x: hidden; scrollbar-width: none; padding: 1rem 0; visibility: visible !important;
+  }
+  .ws-sidebar__body { flex-direction: column; width: 100%; }
+  .ws-sidebar__label { padding-left: 0.75rem !important; }
+  .ws-sidebar__footer { padding-inline: 0.75rem; }
+  .ws-sidebar__desktop-only { display: flex; }
+  .ws-sidebar__nav { --bs-list-group-bg: transparent; --bs-list-group-border-width: 0; gap: 0.125rem; }
+  .ws-sidebar__nav .list-group-item { border-radius: 0.75rem; padding: 0.6rem 0.75rem; font-weight: 600; transition: background-color 150ms ease, color 150ms ease; }
+  .ws-sidebar__nav .is-current { background: var(--bs-primary-bg-subtle); }
+}
+
+/* Perfil en pantallas grandes: encabezado horizontal (docs/Captura de pantalla (16).png) y pestañas
+   Todo · Información · Seguidores · Fotos como el perfil de Facebook, con nuestro tema.
+   Cambiar de pestaña no se anima: se usa muchas veces; solo hay respuesta al presionar. */
+@media (min-width: 992px) {
+  .ws-container--wide { max-width: 64rem; }
+  /* Páginas sin widgets (Personas, Buscar): el contenido usa todo el ancho junto al menú. */
+  .ws-container--fill { max-width: none; }
+  .ws-page-head { flex-direction: row; align-items: center; justify-content: space-between; gap: 1.5rem; }
+  .ws-page-head__search { flex: 0 1 24rem; }
+  .ws-people-grid { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 1rem; }
+  /* Buscar: sin widgets, todo el ancho (ws-container--fill, como Personas); «Explorar» en 4 columnas, como el directorio. */
+  .ws-search-card { padding: 1.5rem 1.5rem 0; }
+  .ws-search-scopes { margin-inline: -1.5rem; padding-inline: 1rem; }
+  .ws-search-form__input { font-size: 1.05rem; }
+  .ws-explore-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+  .ws-explore-card { flex-direction: column; align-items: flex-start; padding: 1.25rem; }
+  .ws-explore-card__text { white-space: normal; }
+  .ws-profile-cover { aspect-ratio: auto; height: 15rem; max-height: none; }
+  .ws-profile-head { flex-direction: row; align-items: flex-end; text-align: left; gap: 1.5rem; padding: 0 2rem 1.5rem; }
+  .ws-profile-avatar-wrap { flex: none; margin-top: -4.5rem; }
+  .ws-profile-head .ws-avatar--xl { width: 9rem; height: 9rem; font-size: 3rem; }
+  .ws-profile-avatar__edit { right: 0.25rem; bottom: 0.5rem; }
+  .ws-profile-identity { flex: 1; padding-bottom: 0.25rem; }
+  .ws-profile-stats, .ws-profile-birthday { justify-content: flex-start; }
+  .ws-profile-actions { align-self: flex-end; padding-bottom: 0.35rem; }
+  /* Pestañas subrayadas bajo el encabezado (como Facebook), con una línea divisoria arriba. */
+  .ws-profile-tabs { margin: 0 2rem; padding: 0; border-top: 1px solid var(--bs-border-color-translucent); }
+  .ws-profile-tabs__list { gap: 0.25rem; overflow: visible; }
+  .ws-profile-tabs__list .nav-link {
+    flex: 0 0 auto; position: relative; padding: 1rem 1.1rem; border-radius: 0; font-size: 0.95rem; background: transparent;
+  }
+  .ws-profile-tabs__list .nav-link.active { background: transparent; color: var(--bs-primary); }
+  .ws-profile-tabs__list .nav-link.active::after {
+    content: ""; position: absolute; left: 0.5rem; right: 0.5rem; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--bs-primary);
+  }
+
+  /* «Todo»: resumen (Datos + fotos) a la izquierda; publicaciones a la derecha. El resumen no es fijo:
+     Datos + Fotos es más alto que la pantalla y lo de abajo quedaría oculto al desplazarse. */
+  .ws-profile-all { display: grid; grid-template-columns: minmax(0, 21rem) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+  .ws-profile-all__side { display: block; }
+  .ws-profile-all__main { min-width: 0; }
+
+  /* Seguidores / Seguidos a dos columnas. */
+  .ws-people-panel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ws-people-panel > .list-group-item { border-width: 0 0 1px; }
+  .ws-people-panel > .list-group-item:nth-child(odd) { border-right-width: 1px; }
+  /* Información a dos columnas: hay espacio. */
+  .ws-profile-info { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 992px) and (hover: hover) and (pointer: fine) {
+  .ws-profile-tabs__list .nav-link:not(.active):hover { background: var(--bs-tertiary-bg); border-radius: 0.75rem 0.75rem 0 0; }
+}
+
+@media (min-width: 1200px) {
+  .ws-shell.has-aside { grid-template-columns: 15.5rem minmax(0, 1fr) 20rem; }
+  /* Columna 3: también fija, con su propio desplazamiento si los widgets no caben. */
+  .has-aside .ws-aside {
+    /* minmax(0, 1fr): sin esto los textos recortados (text-truncate) ensanchan la columna y la desbordan. */
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; padding: 1rem 0 2.5rem;
+    position: sticky; top: calc(var(--ws-header-height) + 1rem); max-height: calc(100dvh - var(--ws-header-height) - 1rem);
+    overflow-y: auto; overflow-x: hidden; scrollbar-width: none;
+  }
+}
+
+/* ---- Personas: pestañas Directorio · Organigrama ------------------------------------------- */
+.ws-people-tabs { --bs-nav-link-color: var(--bs-secondary-color); --bs-nav-underline-link-active-color: var(--bs-primary); }
+.ws-people-tabs .nav-link { display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 600; min-height: var(--ws-touch-target); }
+
+/* ---- Organigrama (d3-org-chart) --------------------------------------------------------------
+   El lienzo ocupa el alto visible (dvh) menos encabezado y pestañas; arrastrar mueve, rueda o pellizco acerca. */
+.ws-org-card { position: relative; overflow: hidden; background: var(--ws-page-bg); }
+.ws-org-canvas { height: clamp(24rem, calc(100dvh - 15rem), 52rem); }
+.ws-org-canvas:not(.is-ready) { display: none; }
+.ws-org-canvas svg { display: block; cursor: grab; }
+.ws-org-canvas svg:active { cursor: grabbing; }
+.ws-org-state { padding: 1.5rem 1rem; }
+.ws-org-toolbar {
+  position: absolute; top: 0.75rem; left: 0.75rem; right: 0.75rem; z-index: 1;
+  display: flex; flex-wrap: wrap; gap: 0.375rem; pointer-events: none;
+}
+.ws-org-toolbar > * { pointer-events: auto; }
+.ws-org-toolbar .btn { box-shadow: var(--bs-box-shadow-sm); }
+.ws-org-toolbar__zoom { display: inline-flex; gap: 0.375rem; margin-left: auto; }
+/* Teléfono: solo íconos para que los controles quepan en una fila y no tapen el árbol. */
+@media (max-width: 575.98px) { .ws-org-toolbar__label { display: none; } .ws-org-toolbar { flex-wrap: nowrap; } }
+
+.ws-org-node {
+  display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0.875rem;
+  background: var(--bs-body-bg); border: 1px solid var(--bs-border-color-translucent); border-radius: 1rem;
+  box-shadow: var(--bs-box-shadow-sm); font-family: var(--bs-body-font-family); color: var(--bs-body-color);
+  transition: border-color 150ms var(--ws-ease-out), box-shadow 150ms var(--ws-ease-out);
+}
+.ws-org-node.is-highlighted { border-color: var(--bs-primary); box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), 0.18); }
+.ws-org-node--company { background: var(--bs-primary); color: #fff; border-color: transparent; }
+.ws-org-node--company .ws-org-node__title { color: rgba(255, 255, 255, 0.8); }
+.ws-org-node__logo { display: inline-flex; align-items: center; justify-content: center; width: 2.75rem; height: 2.75rem; flex: none; font-size: 1.5rem; border-radius: 50%; background: rgba(255, 255, 255, 0.16); }
+.ws-org-node__text { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 0.1rem; }
+.ws-org-node__name, .ws-org-node__title { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ws-org-node__name { font-weight: 700; font-size: 0.95rem; line-height: 1.25; color: inherit; text-decoration: none; }
+.ws-org-node__title { font-size: 0.8rem; color: var(--bs-secondary-color); }
+.ws-org-node__dept {
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 0.2rem; padding: 0.1rem 0.55rem;
+  border-radius: 50rem; font-size: 0.7rem; font-weight: 600; background: var(--bs-tertiary-bg); color: var(--bs-secondary-color);
+}
+.ws-org-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.1rem; margin: auto; padding: 0.1rem 0.5rem 0.1rem 0.3rem;
+  border: 1px solid var(--bs-border-color); border-radius: 50rem; background: var(--bs-body-bg);
+  font: 600 0.75rem/1.4 var(--bs-body-font-family); color: var(--bs-secondary-color);
+}
+@media (hover: hover) and (pointer: fine) {
+  .ws-org-node__name:hover { color: var(--bs-primary); text-decoration: underline; }
+  .ws-org-toggle:hover { border-color: var(--bs-primary); color: var(--bs-primary); }
+}
+
+/* Esqueleto: una cabeza y una fila de tarjetas, con la forma del árbol. */
+.ws-org-skeleton { display: flex; flex-direction: column; align-items: center; gap: 2.5rem; padding: 2rem 0; }
+.ws-org-skeleton__row { display: flex; gap: 1.25rem; }
+.ws-org-skeleton__node { display: block; width: 12rem; height: 4.5rem; }
+@media (max-width: 575.98px) { .ws-org-skeleton__node { width: 8.5rem; } }
+
+/* Movimiento reducido: sin desplazamientos, solo fundidos breves. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .ws-post--new { animation: ws-fade 200ms ease !important; }
+}

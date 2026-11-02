@@ -1,0 +1,10 @@
+{% load static %}
+{# lottie-web se carga bajo demanda (la primera vez que se anima un emoji), no aquí. #}
+<script src="{% static 'assets/js/reactions.js' %}" defer data-lottie-src="{% static 'assets/vendor/lottie/lottie_light.min.js' %}" data-emojis-url="{% url 'catalogs-api:emoji-list' %}"></script>
+<script src="{% static 'assets/js/feed.js' %}" defer></script>
+{# Galería a pantalla completa de cada post (PhotoSwipe 5, MIT). El CSS solo se usa al abrirla. #}
+<link rel="stylesheet" href="{% static 'assets/vendor/photoswipe/photoswipe.css' %}">
+<script src="{% static 'assets/vendor/photoswipe/photoswipe.umd.min.js' %}" defer></script>
+<script src="{% static 'assets/vendor/photoswipe/photoswipe-lightbox.umd.min.js' %}" defer></script>
+<script src="{% static 'assets/js/lightbox.js' %}" defer></script>
+<script src="{% static 'assets/js/comments.js' %}" defer></script>

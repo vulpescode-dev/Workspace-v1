@@ -1,0 +1,80 @@
+{% comment %}
+Columna 3 de Inicio (≥ 1200px): widgets con datos reales, cada uno pide su API (widgets.js).
+Cada widget tiene tres estados: data-widget-state="loading" (skeleton), "empty" y la lista (data-widget-list).
+- Cumpleaños: /api/accounts/birthdays/ (hoy y próximos 30 días; nunca el año).
+- Personas que quizás conozcas: /api/social/follows/suggestions/ (misma área primero), con «Seguir».
+- Avisos recientes: /api/notifications/?page_size=3.
+{% endcomment %}
+<aside class="ws-aside" aria-label="Para ti" data-widgets>
+  <section class="ws-widget" data-widget="birthdays" data-widget-url="{% url 'accounts-api:birthdays' %}" aria-labelledby="ws-w-birthdays">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <span class="fs-5" aria-hidden="true">🎂</span>
+      <h2 class="ws-widget__title" id="ws-w-birthdays">Cumpleaños</h2>
+    </div>
+    <div data-widget-state="loading" aria-hidden="true"><div class="placeholder-glow d-grid gap-2">
+      {% for _ in "12" %}<div class="d-flex align-items-center gap-2"><span class="placeholder rounded-3" style="width:3.25rem;height:2.25rem"></span><span class="placeholder col-7 rounded-2"></span></div>{% endfor %}
+    </div></div>
+    <p class="ws-widget__state" data-widget-state="empty" hidden>Nadie cumple años en los próximos 30 días.</p>
+    <ul class="ws-widget__list" data-widget-list hidden></ul>
+  </section>
+
+  <section class="ws-widget" data-widget="suggestions" data-widget-url="{% url 'social-api:follow-suggestions' %}" aria-labelledby="ws-w-suggestions">
+    <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
+      <h2 class="ws-widget__title" id="ws-w-suggestions">Personas que quizás conozcas</h2>
+      <a class="small fw-semibold text-decoration-none text-nowrap flex-shrink-0" href="{% url 'people' %}">Ver todas</a>
+    </div>
+    <div data-widget-state="loading" aria-hidden="true"><div class="placeholder-glow d-grid gap-2">
+      {% for _ in "123" %}<div class="d-flex align-items-center gap-2"><span class="placeholder rounded-circle" style="width:2.5rem;height:2.5rem"></span><span class="placeholder col-6 rounded-2"></span></div>{% endfor %}
+    </div></div>
+    <p class="ws-widget__state" data-widget-state="empty" hidden>Ya sigues a todas las personas. 🙌</p>
+    <ul class="ws-widget__list" data-widget-list hidden></ul>
+  </section>
+
+  <section class="ws-widget" data-widget="notifications" data-widget-url="{% url 'notifications-api:list' %}?page_size=3" aria-labelledby="ws-w-notifications">
+    <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
+      <h2 class="ws-widget__title" id="ws-w-notifications">Avisos recientes</h2>
+      <a class="small fw-semibold text-decoration-none text-nowrap flex-shrink-0" href="{% url 'notifications' %}">Ver todos</a>
+    </div>
+    <div data-widget-state="loading" aria-hidden="true"><div class="placeholder-glow d-grid gap-2">
+      {% for _ in "12" %}<div class="d-flex align-items-center gap-2"><span class="placeholder rounded-3" style="width:2.5rem;height:2.5rem"></span><span class="placeholder col-8 rounded-2"></span></div>{% endfor %}
+    </div></div>
+    <p class="ws-widget__state" data-widget-state="empty" hidden>No tienes avisos.</p>
+    <ul class="ws-widget__list" data-widget-list hidden></ul>
+  </section>
+</aside>
+
+<template id="ws-widget-birthday-template">
+  <li><a class="ws-widget__item ws-birthday" data-field="link">
+    <span class="ws-birthday__date" data-field="date"></span>
+    <span class="min-w-0 flex-grow-1">
+      <span class="d-block fw-semibold text-truncate" data-field="name"></span>
+      <span class="d-block small text-body-secondary text-truncate" data-field="detail"></span>
+    </span>
+    <span data-field="avatar"></span>
+  </a></li>
+</template>
+
+<template id="ws-widget-person-template">
+  <li class="ws-widget__item">
+    <a class="d-flex align-items-center gap-2 min-w-0 flex-grow-1 text-reset text-decoration-none" data-field="link">
+      <span data-field="avatar"></span>
+      <span class="min-w-0">
+        <span class="d-block fw-semibold text-truncate small" data-field="name"></span>
+        <span class="d-block small text-body-secondary text-truncate" data-field="detail"></span>
+      </span>
+    </a>
+    <button type="button" class="btn btn-primary btn-sm rounded-pill d-inline-flex align-items-center gap-1 flex-shrink-0" data-follow-btn aria-pressed="false">
+      <i class="bx bx-user-plus fs-5" aria-hidden="true"></i><span data-follow-label>Seguir</span>
+    </button>
+  </li>
+</template>
+
+<template id="ws-widget-notice-template">
+  <li><a class="ws-widget__item" data-field="link">
+    <span class="rounded-3 fs-5 ws-notice__icon d-flex align-items-center justify-content-center" data-field="tile"><i class="bx"></i></span>
+    <span class="min-w-0 flex-grow-1">
+      <span class="d-block fw-semibold small text-truncate" data-field="name"></span>
+      <time class="d-block small text-body-secondary" data-field="time"></time>
+    </span>
+  </a></li>
+</template>

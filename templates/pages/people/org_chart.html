@@ -1,0 +1,71 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Organigrama · Workspace{% endblock %}
+
+{% block container_class %}ws-container--fill{% endblock %}
+
+{% block content %}
+{% comment %}
+Organigrama (shell). org_chart.js pide /api/org/chart/?depth=10 y lo dibuja con d3-org-chart
+(vendor/d3-org-chart: d3 → d3-flextree → d3-org-chart). El árbol es por jefe directo; si hay varias
+cabezas (personas sin jefe con gente a cargo) se cuelgan de un nodo «Workspace».
+Buscar centra y resalta a la persona; «Ajustar» encuadra todo lo abierto.
+{% endcomment %}
+<section class="pt-3" data-org-chart data-org-chart-url="{% url 'org-api:chart' %}?depth=10" aria-labelledby="ws-org-title">
+  <header class="ws-page-head mb-3">
+    <div>
+      <h1 class="h4 fw-bolder mb-0" id="ws-org-title">Personas</h1>
+      <p class="small text-body-secondary mb-0" data-org-count aria-live="polite"></p>
+    </div>
+    <form class="ws-page-head__search" role="search" data-org-search novalidate>
+      <label class="visually-hidden" for="ws-org-q">Buscar en el organigrama</label>
+      <div class="input-group shadow-sm rounded-pill overflow-hidden">
+        <span class="input-group-text bg-white border-0 ps-3"><i class="bx bx-search text-body-secondary" aria-hidden="true"></i></span>
+        <input type="search" class="form-control border-0" id="ws-org-q" placeholder="Buscar persona en el organigrama" autocomplete="off" enterkeyhint="search" list="ws-org-people">
+        <datalist id="ws-org-people" data-org-people></datalist>
+      </div>
+    </form>
+  </header>
+  {% include "components/people/tabs.html" with current="chart" only %}
+
+  <div class="card border-0 shadow-sm rounded-4 ws-org-card">
+    <div class="ws-org-toolbar" role="toolbar" aria-label="Controles del organigrama" data-org-toolbar hidden>
+      <button type="button" class="btn btn-light btn-sm ws-btn-icon" data-org-action="fit" aria-label="Ajustar"><i class="bx bx-expand-alt" aria-hidden="true"></i><span class="ws-org-toolbar__label">Ajustar</span></button>
+      <button type="button" class="btn btn-light btn-sm ws-btn-icon" data-org-action="expand" aria-label="Abrir todo"><i class="bx bx-sitemap" aria-hidden="true"></i><span class="ws-org-toolbar__label">Abrir todo</span></button>
+      <button type="button" class="btn btn-light btn-sm ws-btn-icon" data-org-action="collapse" aria-label="Cerrar"><i class="bx bx-collapse-alt" aria-hidden="true"></i><span class="ws-org-toolbar__label">Cerrar</span></button>
+      <span class="ws-org-toolbar__zoom">
+        <button type="button" class="btn btn-light btn-sm" data-org-action="zoom-out" aria-label="Alejar"><i class="bx bx-minus" aria-hidden="true"></i></button>
+        <button type="button" class="btn btn-light btn-sm" data-org-action="zoom-in" aria-label="Acercar"><i class="bx bx-plus" aria-hidden="true"></i></button>
+      </span>
+    </div>
+
+    <div class="ws-org-canvas" data-org-canvas aria-label="Organigrama: arrastra para moverte, rueda o pellizca para acercar"></div>
+
+    <div class="ws-org-state" data-org-state="loading" aria-hidden="true">
+      <div class="ws-org-skeleton placeholder-glow">
+        <span class="placeholder rounded-4 ws-org-skeleton__node"></span>
+        <span class="ws-org-skeleton__row">
+          <span class="placeholder rounded-4 ws-org-skeleton__node"></span>
+          <span class="placeholder rounded-4 ws-org-skeleton__node"></span>
+          <span class="placeholder rounded-4 ws-org-skeleton__node d-none d-sm-block"></span>
+        </span>
+      </div>
+    </div>
+    <div class="ws-org-state" data-org-state="empty" hidden>
+      {% include "components/feedback/empty_state.html" with icon="bx-sitemap" title="El organigrama está vacío" description="Todavía nadie tiene jefe directo. RRHH lo captura en el admin (Usuarios › jefe directo)." only %}
+    </div>
+    <div class="ws-org-state" data-org-state="error" hidden>
+      {% include "components/feedback/empty_state.html" with icon="bx-error" title="No se pudo cargar el organigrama" description="Revisa tu conexión e inténtalo de nuevo." only %}
+    </div>
+  </div>
+  <p class="small text-body-secondary mt-2 mb-0" data-org-unassigned hidden></p>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+  {% load static %}
+  <script src="{% static 'assets/vendor/d3-org-chart/d3.min.js' %}" defer></script>
+  <script src="{% static 'assets/vendor/d3-org-chart/d3-flextree.min.js' %}" defer></script>
+  <script src="{% static 'assets/vendor/d3-org-chart/d3-org-chart.min.js' %}" defer></script>
+  <script src="{% static 'assets/js/org_chart.js' %}" defer></script>
+{% endblock %}

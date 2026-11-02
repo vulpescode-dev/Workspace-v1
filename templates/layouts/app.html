@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block app_shell %}
+<a class="visually-hidden-focusable btn btn-primary position-absolute top-0 start-0 m-2 z-3" href="#main-content">
+    Saltar al contenido
+</a>
+{% comment %}
+Estructura. Teléfono: encabezado + contenido + barra inferior; el menú es un panel lateral (offcanvas).
+Pantallas grandes (.ws-shell es una cuadrícula):
+- ≥ 992px: columna 1 = el mismo menú, fijo (offcanvas-lg) · columna 2 = contenido. Sin barra inferior.
+- ≥ 1200px y la página define {% block aside %}: columna 3 = widgets.
+- {% block shell_class %} no-sidebar{% endblock %}: sin menú lateral, una columna centrada (perfil).
+  El encabezado usa el mismo ancho que .ws-shell (--ws-shell-width) para alinearse con las columnas.
+{% endcomment %}
+<div class="ws-app" id="ws-app">
+    {% include "components/navigation/app_header.html" %}
+    <div class="ws-shell{% block shell_class %}{% endblock %}">
+        {% include "components/navigation/offcanvas_menu.html" with user=user display_name=display_name display_initials=display_initials display_avatar_url=display_avatar_url active_nav=active_nav csrf_token=csrf_token only %}
+        <main id="main-content" class="ws-content">
+            <div class="container-fluid ws-container {% block container_class %}{% endblock %} px-3">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+        {% block aside %}{% endblock %}
+    </div>
+    {% include "components/navigation/bottom_nav.html" %}
+</div>
+
+{# Confirmación reutilizable (Workspace.confirm). Para acciones destructivas: nunca window.confirm. #}
+<div class="modal fade ws-confirm-modal" id="ws-confirm-modal" tabindex="-1" aria-labelledby="ws-confirm-title"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 rounded-4">
+            <div class="modal-body text-center p-4 pb-3">
+                <h2 class="h5 fw-bold mb-2" id="ws-confirm-title" data-confirm-title></h2>
+                <p class="small text-body-secondary mb-0" data-confirm-text></p>
+            </div>
+            <div class="modal-footer border-0 pt-0 pb-4 justify-content-center gap-2">
+                <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger px-4" data-confirm-accept>Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Avisos breves (Bootstrap Toast). workspace.js los muestra con Workspace.toast("texto"). #}
+<div class="toast-container position-fixed start-50 translate-middle-x ws-toast-container">
+    <div class="toast align-items-center text-bg-dark border-0" id="ws-toast" role="status" aria-live="polite"
+        aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" data-ws-toast-body></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Cerrar"></button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}{% block page_modals %}{% endblock %}{% endblock %}

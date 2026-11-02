@@ -1,0 +1,54 @@
+{# Modal de nueva publicación (Bootstrap Modal). El formulario se envía por JS a POST /api/social/posts/. Variables: display_name, display_initials. #}
+<div class="modal fade" id="ws-create-modal" tabindex="-1" aria-labelledby="ws-create-title" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-centered">
+    <form class="modal-content" id="ws-create-form" novalidate>
+      {# Progreso de subida (solo con archivos). #}
+      <div class="progress rounded-0 ws-upload-progress" role="progressbar" aria-label="Subiendo archivos" aria-valuemin="0" aria-valuemax="100" data-upload-progress hidden>
+        <div class="progress-bar" style="width: 0%"></div>
+      </div>
+      <div class="modal-header gap-2">
+        <button type="button" class="btn btn-link text-body p-1 lh-1" data-bs-dismiss="modal" aria-label="Cerrar"><i class="bx bx-arrow-back fs-4" aria-hidden="true"></i></button>
+        <h2 class="modal-title h5 fw-bold flex-grow-1" id="ws-create-title">Crear publicación</h2>
+        <button type="submit" class="btn btn-primary fw-bold ws-submit" data-ws-create-submit>
+          <span class="ws-submit__label">Publicar</span>
+          <span class="spinner-border spinner-border-sm ws-submit__spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          {% include "components/ui/avatar.html" with initials=display_initials image_url=display_avatar_url size="lg" only %}
+          <div>
+            <strong class="d-block">{{ display_name }}</strong>
+            {# Audiencia: «Toda la empresa» o «Solo seguidores» (el servidor aplica la regla de visibilidad). #}
+            <input type="hidden" name="audience" value="company" data-audience-input>
+            <div class="dropdown mt-1">
+              <button type="button" class="btn btn-light btn-sm rounded-pill border d-inline-flex align-items-center gap-1 fw-medium" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Elegir quién puede ver la publicación">
+                <i class="bx bx-globe" data-audience-icon aria-hidden="true"></i><span data-audience-label>Toda la empresa</span><i class="bx bx-chevron-down" aria-hidden="true"></i>
+              </button>
+              <ul class="dropdown-menu shadow border-0 rounded-3">
+                <li><button type="button" class="dropdown-item d-flex gap-2 align-items-start py-2" data-audience-option="company">
+                  <i class="bx bx-globe fs-5 text-primary" aria-hidden="true"></i>
+                  <span><strong class="d-block">Toda la empresa</strong><small class="text-body-secondary">Cualquier persona en Workspace</small></span>
+                </button></li>
+                <li><button type="button" class="dropdown-item d-flex gap-2 align-items-start py-2" data-audience-option="followers">
+                  <i class="bx bx-group fs-5 text-primary" aria-hidden="true"></i>
+                  <span><strong class="d-block">Solo seguidores</strong><small class="text-body-secondary">Tú y las personas que te siguen</small></span>
+                </button></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <label class="visually-hidden" for="ws-create-text">Contenido de la publicación</label>
+        <textarea id="ws-create-text" name="body" class="form-control border-0 shadow-none fs-5 px-0 ws-create-text" rows="6" maxlength="5000" placeholder="¿Qué nos compartes hoy?" required></textarea>
+        <div class="ws-attach-grid mt-2" data-attach-preview></div>
+        <p class="text-danger small fw-semibold mt-2 mb-0" id="ws-create-error" role="alert" hidden></p>
+      </div>
+      <div class="modal-footer justify-content-between gap-2">
+        {# Las imágenes se convierten a WebP en el navegador antes de subir (Workspace.procesarAWebP). #}
+        <input type="file" class="d-none" id="ws-create-files" accept="image/*,video/mp4,video/quicktime,video/webm" multiple data-attach-input>
+        <label for="ws-create-files" class="btn btn-light d-inline-flex align-items-center gap-2 mb-0"><i class="bx bx-image-alt fs-5 text-success" aria-hidden="true"></i> Foto / Video</label>
+        <span class="small text-body-secondary" data-attach-count></span>
+      </div>
+    </form>
+  </div>
+</div>
