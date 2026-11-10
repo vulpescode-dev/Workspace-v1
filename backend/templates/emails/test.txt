@@ -1,0 +1,9 @@
+¡Hola{% if name %}, {{ name }}{% endif %}!
+
+Este es un correo de prueba de {{ site_name }}. Si lo estás leyendo, el envío de correos funciona.
+Así se verán los avisos que enviemos desde la plataforma.
+
+Abrir {{ site_name }}: {{ site_url }}
+
+—
+Este correo se envió desde una dirección que no recibe respuestas. Si tienes dudas, escribe a Soporte TI.

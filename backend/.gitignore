@@ -1,0 +1,35 @@
+# Backend (Django). Lo común está en ../.gitignore.
+
+# Entorno virtual
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Configuración de este equipo (se sube .env.example)
+.env
+.env.*
+!.env.example
+
+# Base de datos local (SQLite) — datos de prueba de cada equipo
+db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+
+# Archivos subidos por las personas (fotos, documentos, adjuntos): nunca al repositorio
+/media/
+
+# Generado por `collectstatic` (static/ con los emojis y fuentes SÍ se sube)
+/staticfiles/
+
+# Pruebas y cobertura
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+
+# Registros
+*.log

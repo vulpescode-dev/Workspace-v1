@@ -1,0 +1,14 @@
+# Finales de línea: LF en el repositorio y en cada equipo (Windows incluido), para que nadie vea
+# diferencias falsas por CRLF. Los binarios se detectan solos.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.pdf binary

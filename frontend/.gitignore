@@ -1,0 +1,23 @@
+# Frontend (React + Vite). Lo común está en ../.gitignore.
+
+# Dependencias (se instalan con `npm install`; package-lock.json SÍ se sube)
+node_modules/
+
+# Build
+dist/
+dist-ssr/
+*.tsbuildinfo
+
+# Configuración de este equipo (se sube .env.example)
+.env
+.env.*
+!.env.example
+
+# Caché y cobertura
+.vite/
+coverage/
+.eslintcache
+
+# Registros
+*.log
+npm-debug.log*

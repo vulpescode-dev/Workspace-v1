@@ -1,0 +1,942 @@
+{
+  "emojis": [
+    {
+      "code": "smile",
+      "codepoint": "1f600",
+      "char": "😀",
+      "label": "Smile",
+      "position": 10
+    },
+    {
+      "code": "joy",
+      "codepoint": "1f602",
+      "char": "😂",
+      "label": "Joy",
+      "position": 20
+    },
+    {
+      "code": "heart_eyes",
+      "codepoint": "1f60d",
+      "char": "😍",
+      "label": "Heart eyes",
+      "position": 30
+    },
+    {
+      "code": "partying_face",
+      "codepoint": "1f973",
+      "char": "🥳",
+      "label": "Partying face",
+      "position": 40
+    },
+    {
+      "code": "holding_back_tears",
+      "codepoint": "1f979",
+      "char": "🥹",
+      "label": "Holding back tears",
+      "position": 50
+    },
+    {
+      "code": "drool",
+      "codepoint": "1f924",
+      "char": "🤤",
+      "label": "Drool",
+      "position": 60
+    },
+    {
+      "code": "yum",
+      "codepoint": "1f60b",
+      "char": "😋",
+      "label": "Yum",
+      "position": 70
+    },
+    {
+      "code": "distorted_face",
+      "codepoint": "1faea",
+      "char": "🫪",
+      "label": "Distorted face",
+      "position": 80
+    },
+    {
+      "code": "pleading",
+      "codepoint": "1f97a",
+      "char": "🥺",
+      "label": "Pleading",
+      "position": 90
+    },
+    {
+      "code": "thinking_face",
+      "codepoint": "1f914",
+      "char": "🤔",
+      "label": "Thinking face",
+      "position": 100
+    },
+    {
+      "code": "peeking",
+      "codepoint": "1fae3",
+      "char": "🫣",
+      "label": "Peeking",
+      "position": 110
+    },
+    {
+      "code": "rage",
+      "codepoint": "1f621",
+      "char": "😡",
+      "label": "Rage",
+      "position": 120
+    },
+    {
+      "code": "cursing",
+      "codepoint": "1f92c",
+      "char": "🤬",
+      "label": "Cursing",
+      "position": 130
+    },
+    {
+      "code": "surprised",
+      "codepoint": "1f62f",
+      "char": "😯",
+      "label": "Surprised",
+      "position": 140
+    },
+    {
+      "code": "mind_blown",
+      "codepoint": "1f92f",
+      "char": "🤯",
+      "label": "Mind blown",
+      "position": 150
+    },
+    {
+      "code": "cold_face",
+      "codepoint": "1f976",
+      "char": "🥶",
+      "label": "Cold face",
+      "position": 160
+    },
+    {
+      "code": "sick",
+      "codepoint": "1f922",
+      "char": "🤢",
+      "label": "Sick",
+      "position": 170
+    },
+    {
+      "code": "vomit",
+      "codepoint": "1f92e",
+      "char": "🤮",
+      "label": "Vomit",
+      "position": 180
+    },
+    {
+      "code": "tired",
+      "codepoint": "1fae9",
+      "char": "🫩",
+      "label": "Tired",
+      "position": 190
+    },
+    {
+      "code": "thermometer_face",
+      "codepoint": "1f912",
+      "char": "🤒",
+      "label": "Thermometer face",
+      "position": 200
+    },
+    {
+      "code": "bandage_face",
+      "codepoint": "1f915",
+      "char": "🤕",
+      "label": "Bandage face",
+      "position": 210
+    },
+    {
+      "code": "mask",
+      "codepoint": "1f637",
+      "char": "😷",
+      "label": "Mask",
+      "position": 220
+    },
+    {
+      "code": "halo",
+      "codepoint": "1f607",
+      "char": "😇",
+      "label": "Halo",
+      "position": 230
+    },
+    {
+      "code": "clown",
+      "codepoint": "1f921",
+      "char": "🤡",
+      "label": "Clown",
+      "position": 240
+    },
+    {
+      "code": "ghost",
+      "codepoint": "1f47b",
+      "char": "👻",
+      "label": "Ghost",
+      "position": 250
+    },
+    {
+      "code": "snowman",
+      "codepoint": "26c4",
+      "char": "⛄",
+      "label": "Snowman",
+      "position": 260
+    },
+    {
+      "code": "alien_monster",
+      "codepoint": "1f47e",
+      "char": "👾",
+      "label": "Alien monster",
+      "position": 270
+    },
+    {
+      "code": "moon_face_new",
+      "codepoint": "1f31a",
+      "char": "🌚",
+      "label": "Moon face new",
+      "position": 280
+    },
+    {
+      "code": "moon_face_full",
+      "codepoint": "1f31d",
+      "char": "🌝",
+      "label": "Moon face full",
+      "position": 290
+    },
+    {
+      "code": "sun_with_face",
+      "codepoint": "1f31e",
+      "char": "🌞",
+      "label": "Sun with face",
+      "position": 300
+    },
+    {
+      "code": "see_no_evil_monkey",
+      "codepoint": "1f648",
+      "char": "🙈",
+      "label": "See no evil monkey",
+      "position": 310
+    },
+    {
+      "code": "hear_no_evil_monkey",
+      "codepoint": "1f649",
+      "char": "🙉",
+      "label": "Hear no evil monkey",
+      "position": 320
+    },
+    {
+      "code": "speak_no_evil_monkey",
+      "codepoint": "1f64a",
+      "char": "🙊",
+      "label": "Speak no evil monkey",
+      "position": 330
+    },
+    {
+      "code": "fire",
+      "codepoint": "1f525",
+      "char": "🔥",
+      "label": "Fire",
+      "position": 340
+    },
+    {
+      "code": "party_popper",
+      "codepoint": "1f389",
+      "char": "🎉",
+      "label": "Party popper",
+      "position": 350
+    },
+    {
+      "code": "red_heart",
+      "codepoint": "2764_fe0f",
+      "char": "❤️",
+      "label": "Red heart",
+      "position": 360
+    },
+    {
+      "code": "orange_heart",
+      "codepoint": "1f9e1",
+      "char": "🧡",
+      "label": "Orange heart",
+      "position": 370
+    },
+    {
+      "code": "green_heart",
+      "codepoint": "1f49a",
+      "char": "💚",
+      "label": "Green heart",
+      "position": 380
+    },
+    {
+      "code": "light_blue_heart",
+      "codepoint": "1fa75",
+      "char": "🩵",
+      "label": "Light blue heart",
+      "position": 390
+    },
+    {
+      "code": "blue_heart",
+      "codepoint": "1f499",
+      "char": "💙",
+      "label": "Blue heart",
+      "position": 400
+    },
+    {
+      "code": "purple_heart",
+      "codepoint": "1f49c",
+      "char": "💜",
+      "label": "Purple heart",
+      "position": 410
+    },
+    {
+      "code": "brown_heart",
+      "codepoint": "1f90e",
+      "char": "🤎",
+      "label": "Brown heart",
+      "position": 420
+    },
+    {
+      "code": "black_heart",
+      "codepoint": "1f5a4",
+      "char": "🖤",
+      "label": "Black heart",
+      "position": 430
+    },
+    {
+      "code": "grey_heart",
+      "codepoint": "1fa76",
+      "char": "🩶",
+      "label": "Grey heart",
+      "position": 440
+    },
+    {
+      "code": "white_heart",
+      "codepoint": "1f90d",
+      "char": "🤍",
+      "label": "White heart",
+      "position": 450
+    },
+    {
+      "code": "pink_heart",
+      "codepoint": "1fa77",
+      "char": "🩷",
+      "label": "Pink heart",
+      "position": 460
+    },
+    {
+      "code": "hugging",
+      "codepoint": "1fac2",
+      "char": "🫂",
+      "label": "Hugging",
+      "position": 470
+    },
+    {
+      "code": "thumbs_up",
+      "codepoint": "1f44d",
+      "char": "👍",
+      "label": "Thumbs up",
+      "position": 480
+    },
+    {
+      "code": "heart_hands",
+      "codepoint": "1faf6",
+      "char": "🫶",
+      "label": "Heart hands",
+      "position": 490
+    },
+    {
+      "code": "hand_with_index_finger_and_thumb_crossed",
+      "codepoint": "1faf0",
+      "char": "🫰",
+      "label": "Hand with index finger and thumb crossed",
+      "position": 500
+    },
+    {
+      "code": "ok",
+      "codepoint": "1f44c",
+      "char": "👌",
+      "label": "Ok",
+      "position": 510
+    },
+    {
+      "code": "middle_finger",
+      "codepoint": "1f595",
+      "char": "🖕",
+      "label": "Middle finger",
+      "position": 520
+    },
+    {
+      "code": "folded_hands",
+      "codepoint": "1f64f",
+      "char": "🙏",
+      "label": "Folded hands",
+      "position": 530
+    },
+    {
+      "code": "nail_care",
+      "codepoint": "1f485",
+      "char": "💅",
+      "label": "Nail care",
+      "position": 540
+    },
+    {
+      "code": "handshake",
+      "codepoint": "1f91d",
+      "char": "🤝",
+      "label": "Handshake",
+      "position": 550
+    },
+    {
+      "code": "fox_face",
+      "codepoint": "1f98a",
+      "char": "🦊",
+      "label": "Fox face",
+      "position": 560
+    },
+    {
+      "code": "turtle",
+      "codepoint": "1f422",
+      "char": "🐢",
+      "label": "Turtle",
+      "position": 570
+    },
+    {
+      "code": "snake",
+      "codepoint": "1f40d",
+      "char": "🐍",
+      "label": "Snake",
+      "position": 580
+    },
+    {
+      "code": "rat",
+      "codepoint": "1f400",
+      "char": "🐀",
+      "label": "Rat",
+      "position": 590
+    },
+    {
+      "code": "dog",
+      "codepoint": "1f415",
+      "char": "🐕",
+      "label": "Dog",
+      "position": 600
+    },
+    {
+      "code": "pig",
+      "codepoint": "1f416",
+      "char": "🐖",
+      "label": "Pig",
+      "position": 610
+    },
+    {
+      "code": "donkey",
+      "codepoint": "1facf",
+      "char": "🫏",
+      "label": "Donkey",
+      "position": 620
+    },
+    {
+      "code": "sloth",
+      "codepoint": "1f9a5",
+      "char": "🦥",
+      "label": "Sloth",
+      "position": 630
+    },
+    {
+      "code": "clinking_beer_mugs",
+      "codepoint": "1f37b",
+      "char": "🍻",
+      "label": "Clinking beer mugs",
+      "position": 640
+    },
+    {
+      "code": "bottle_with_popping_cork",
+      "codepoint": "1f37e",
+      "char": "🍾",
+      "label": "Bottle with popping cork",
+      "position": 650
+    },
+    {
+      "code": "construction",
+      "codepoint": "1f6a7",
+      "char": "🚧",
+      "label": "Construction",
+      "position": 660
+    },
+    {
+      "code": "police_car_light",
+      "codepoint": "1f6a8",
+      "char": "🚨",
+      "label": "Police car light",
+      "position": 670
+    },
+    {
+      "code": "birthday_cake",
+      "codepoint": "1f382",
+      "char": "🎂",
+      "label": "Birthday cake",
+      "position": 680
+    },
+    {
+      "code": "mirror_ball",
+      "codepoint": "1faa9",
+      "char": "🪩",
+      "label": "Mirror ball",
+      "position": 690
+    },
+    {
+      "code": "camera_flash",
+      "codepoint": "1f4f8",
+      "char": "📸",
+      "label": "Camera flash",
+      "position": 700
+    },
+    {
+      "code": "admission_tickets",
+      "codepoint": "1f39f_fe0f",
+      "char": "🎟️",
+      "label": "Admission tickets",
+      "position": 710
+    },
+    {
+      "code": "alarm_clock",
+      "codepoint": "23f0",
+      "char": "⏰",
+      "label": "Alarm clock",
+      "position": 720
+    },
+    {
+      "code": "hourglass_done",
+      "codepoint": "231b",
+      "char": "⌛",
+      "label": "Hourglass done",
+      "position": 730
+    },
+    {
+      "code": "mouse_trap",
+      "codepoint": "1faa4",
+      "char": "🪤",
+      "label": "Mouse trap",
+      "position": 740
+    },
+    {
+      "code": "triangular_flag",
+      "codepoint": "1f6a9",
+      "char": "🚩",
+      "label": "Triangular flag",
+      "position": 750
+    },
+    {
+      "code": "grin_sweat",
+      "codepoint": "1f605",
+      "char": "😅",
+      "label": "Grin sweat",
+      "position": 760
+    },
+    {
+      "code": "rofl",
+      "codepoint": "1f923",
+      "char": "🤣",
+      "label": "Rofl",
+      "position": 770
+    },
+    {
+      "code": "loudly_crying",
+      "codepoint": "1f62d",
+      "char": "😭",
+      "label": "Loudly crying",
+      "position": 780
+    },
+    {
+      "code": "head_shake",
+      "codepoint": "1f642_200d_2194_fe0f",
+      "char": "🙂‍↔️",
+      "label": "Head shake",
+      "position": 790
+    },
+    {
+      "code": "grimacing",
+      "codepoint": "1f62c",
+      "char": "😬",
+      "label": "Grimacing",
+      "position": 800
+    },
+    {
+      "code": "neutral_face",
+      "codepoint": "1f610",
+      "char": "😐",
+      "label": "Neutral face",
+      "position": 810
+    },
+    {
+      "code": "salute",
+      "codepoint": "1fae1",
+      "char": "🫡",
+      "label": "Salute",
+      "position": 820
+    },
+    {
+      "code": "dizzy_face",
+      "codepoint": "1f635_200d_1f4ab",
+      "char": "😵‍💫",
+      "label": "Dizzy face",
+      "position": 830
+    },
+    {
+      "code": "sleep",
+      "codepoint": "1f634",
+      "char": "😴",
+      "label": "Sleep",
+      "position": 840
+    },
+    {
+      "code": "sneeze",
+      "codepoint": "1f927",
+      "char": "🤧",
+      "label": "Sneeze",
+      "position": 850
+    },
+    {
+      "code": "disguise",
+      "codepoint": "1f978",
+      "char": "🥸",
+      "label": "Disguise",
+      "position": 860
+    },
+    {
+      "code": "robot",
+      "codepoint": "1f916",
+      "char": "🤖",
+      "label": "Robot",
+      "position": 870
+    },
+    {
+      "code": "bandaged_heart",
+      "codepoint": "2764_fe0f_200d_1fa79",
+      "char": "❤️‍🩹",
+      "label": "Bandaged heart",
+      "position": 880
+    },
+    {
+      "code": "broken_heart",
+      "codepoint": "1f494",
+      "char": "💔",
+      "label": "Broken heart",
+      "position": 890
+    },
+    {
+      "code": "fire_heart",
+      "codepoint": "2764_fe0f_200d_1f525",
+      "char": "❤️‍🔥",
+      "label": "Fire heart",
+      "position": 900
+    },
+    {
+      "code": "kiss",
+      "codepoint": "1f48b",
+      "char": "💋",
+      "label": "Kiss",
+      "position": 910
+    },
+    {
+      "code": "speaking_head",
+      "codepoint": "1f5e3_fe0f",
+      "char": "🗣️",
+      "label": "Speaking head",
+      "position": 920
+    },
+    {
+      "code": "biting_lip",
+      "codepoint": "1fae6",
+      "char": "🫦",
+      "label": "Biting lip",
+      "position": 930
+    },
+    {
+      "code": "clap",
+      "codepoint": "1f44f",
+      "char": "👏",
+      "label": "Clap",
+      "position": 940
+    },
+    {
+      "code": "thumbs_down",
+      "codepoint": "1f44e",
+      "char": "👎",
+      "label": "Thumbs down",
+      "position": 950
+    },
+    {
+      "code": "raising_hands",
+      "codepoint": "1f64c",
+      "char": "🙌",
+      "label": "Raising hands",
+      "position": 960
+    },
+    {
+      "code": "open_hands",
+      "codepoint": "1f450",
+      "char": "👐",
+      "label": "Open hands",
+      "position": 970
+    },
+    {
+      "code": "palms_up",
+      "codepoint": "1f932",
+      "char": "🤲",
+      "label": "Palms up",
+      "position": 980
+    },
+    {
+      "code": "fist_rightwards",
+      "codepoint": "1f91c",
+      "char": "🤜",
+      "label": "Fist rightwards",
+      "position": 990
+    },
+    {
+      "code": "fist_leftwards",
+      "codepoint": "1f91b",
+      "char": "🤛",
+      "label": "Fist leftwards",
+      "position": 1000
+    },
+    {
+      "code": "raised_fist",
+      "codepoint": "270a",
+      "char": "✊",
+      "label": "Raised fist",
+      "position": 1010
+    },
+    {
+      "code": "fist",
+      "codepoint": "1f44a",
+      "char": "👊",
+      "label": "Fist",
+      "position": 1020
+    },
+    {
+      "code": "palm_down",
+      "codepoint": "1faf3",
+      "char": "🫳",
+      "label": "Palm down",
+      "position": 1030
+    },
+    {
+      "code": "palm_up",
+      "codepoint": "1faf4",
+      "char": "🫴",
+      "label": "Palm up",
+      "position": 1040
+    },
+    {
+      "code": "rightwards_hand",
+      "codepoint": "1faf1",
+      "char": "🫱",
+      "label": "Rightwards hand",
+      "position": 1050
+    },
+    {
+      "code": "leftwards_hand",
+      "codepoint": "1faf2",
+      "char": "🫲",
+      "label": "Leftwards hand",
+      "position": 1060
+    },
+    {
+      "code": "palm",
+      "codepoint": "1f590_fe0f",
+      "char": "🖐️",
+      "label": "Palm",
+      "position": 1070
+    },
+    {
+      "code": "raised_hand",
+      "codepoint": "270b",
+      "char": "✋",
+      "label": "Raised hand",
+      "position": 1080
+    },
+    {
+      "code": "vulcan",
+      "codepoint": "1f596",
+      "char": "🖖",
+      "label": "Vulcan",
+      "position": 1090
+    },
+    {
+      "code": "love_you_gesture",
+      "codepoint": "1f91f",
+      "char": "🤟",
+      "label": "Love you gesture",
+      "position": 1100
+    },
+    {
+      "code": "metal",
+      "codepoint": "1f918",
+      "char": "🤘",
+      "label": "Metal",
+      "position": 1110
+    },
+    {
+      "code": "victory",
+      "codepoint": "270c_fe0f",
+      "char": "✌️",
+      "label": "Victory",
+      "position": 1120
+    },
+    {
+      "code": "crossed_fingers",
+      "codepoint": "1f91e",
+      "char": "🤞",
+      "label": "Crossed fingers",
+      "position": 1130
+    },
+    {
+      "code": "call_me_hand",
+      "codepoint": "1f919",
+      "char": "🤙",
+      "label": "Call me hand",
+      "position": 1140
+    },
+    {
+      "code": "pinched_fingers",
+      "codepoint": "1f90c",
+      "char": "🤌",
+      "label": "Pinched fingers",
+      "position": 1150
+    },
+    {
+      "code": "dancer_woman",
+      "codepoint": "1f483",
+      "char": "💃",
+      "label": "Dancer woman",
+      "position": 1160
+    },
+    {
+      "code": "bouquet",
+      "codepoint": "1f490",
+      "char": "💐",
+      "label": "Bouquet",
+      "position": 1170
+    },
+    {
+      "code": "monkey",
+      "codepoint": "1f412",
+      "char": "🐒",
+      "label": "Monkey",
+      "position": 1180
+    },
+    {
+      "code": "seal",
+      "codepoint": "1f9ad",
+      "char": "🦭",
+      "label": "Seal",
+      "position": 1190
+    },
+    {
+      "code": "paw_prints",
+      "codepoint": "1f43e",
+      "char": "🐾",
+      "label": "Paw prints",
+      "position": 1200
+    },
+    {
+      "code": "popcorn",
+      "codepoint": "1f37f",
+      "char": "🍿",
+      "label": "Popcorn",
+      "position": 1210
+    },
+    {
+      "code": "baby_bottle",
+      "codepoint": "1f37c",
+      "char": "🍼",
+      "label": "Baby bottle",
+      "position": 1220
+    },
+    {
+      "code": "hot_beverage",
+      "codepoint": "2615",
+      "char": "☕",
+      "label": "Hot beverage",
+      "position": 1230
+    },
+    {
+      "code": "mate",
+      "codepoint": "1f9c9",
+      "char": "🧉",
+      "label": "Mate",
+      "position": 1240
+    },
+    {
+      "code": "pinata",
+      "codepoint": "1fa85",
+      "char": "🪅",
+      "label": "Piñata",
+      "position": 1250
+    },
+    {
+      "code": "performing_arts",
+      "codepoint": "1f3ad",
+      "char": "🎭",
+      "label": "Performing arts",
+      "position": 1260
+    },
+    {
+      "code": "battery_full",
+      "codepoint": "1f50b",
+      "char": "🔋",
+      "label": "Battery full",
+      "position": 1270
+    },
+    {
+      "code": "battery_low",
+      "codepoint": "1faab",
+      "char": "🪫",
+      "label": "Battery low",
+      "position": 1280
+    },
+    {
+      "code": "coin",
+      "codepoint": "1fa99",
+      "char": "🪙",
+      "label": "Coin",
+      "position": 1290
+    },
+    {
+      "code": "money_with_wings",
+      "codepoint": "1f4b8",
+      "char": "💸",
+      "label": "Money with wings",
+      "position": 1300
+    },
+    {
+      "code": "chart_increasing",
+      "codepoint": "1f4c8",
+      "char": "📈",
+      "label": "Chart increasing",
+      "position": 1310
+    },
+    {
+      "code": "chart_decreasing",
+      "codepoint": "1f4c9",
+      "char": "📉",
+      "label": "Chart decreasing",
+      "position": 1320
+    },
+    {
+      "code": "question",
+      "codepoint": "2753",
+      "char": "❓",
+      "label": "Question",
+      "position": 1330
+    },
+    {
+      "code": "cross_mark",
+      "codepoint": "274c",
+      "char": "❌",
+      "label": "Cross mark",
+      "position": 1340
+    }
+  ]
+}

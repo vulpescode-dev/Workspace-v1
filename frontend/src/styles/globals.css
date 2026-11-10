@@ -1,0 +1,158 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   Sistema visual: tokens de Tailwind v4 (@theme). Cambia aquí colores, fuente,
+   radios y curvas; los componentes solo usan las utilidades que generan.
+   ========================================================================== */
+
+/* Tipografía: Inter (variable, desde npm: @fontsource-variable/inter, importada en main.tsx) para toda la
+   interfaz; Montserrat solo para títulos (font-display), con 600–800. Nunca una tercera familia. */
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 600; font-display: swap; src: url('/fonts/montserrat-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/montserrat-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-weight: 800; font-display: swap; src: url('/fonts/montserrat-latin-800-normal.woff2') format('woff2'); }
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-display: 'Montserrat', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Marca: azul primario #0066CC y amarillo secundario #F4C600 (texto oscuro encima). */
+  --color-brand-50: #eef6ff;
+  --color-brand-100: #d9eaff;
+  --color-brand-200: #b3d4f7;
+  --color-brand-300: #80b5ee;
+  --color-brand-400: #3d8be0;
+  --color-brand-500: #0066cc;
+  --color-brand-600: #0057ad;
+  --color-brand-700: #004a94;
+  --color-brand-800: #003a75;
+  --color-brand-900: #002952;
+  --color-accent-100: #fdf4cc;
+  --color-accent-400: #f4c600;
+  --color-accent-900: #4d3e00;
+
+  /* Superficies */
+  --color-canvas: #f5f6fa;
+  --color-surface: #ffffff;
+
+  /* Movimiento (Emil Kowalski): ease-out fuerte para entrar/responder, siempre < 300 ms. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Ancho único del contenedor: el encabezado y todas las páginas comparten este ancho. */
+  --container-shell: 72rem;
+
+  --animate-enter: enter 280ms var(--ease-out) both;
+}
+
+@keyframes story-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes enter {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+/* Pantallas de error: los emojis acompañantes flotan suave (components/feedback/ErrorScene.tsx). */
+@keyframes ws-float {
+  from { translate: 0 0; }
+  to { translate: 0 -8px; }
+}
+.ws-float { animation: ws-float 2.8s var(--ease-in-out) infinite alternate; }
+
+/* Lista de un Combobox: aparece desde su campo (no desde la nada). */
+@keyframes combobox-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+}
+
+@layer base {
+  /* Reserva siempre el espacio de la barra de desplazamiento: así una página corta y una larga
+     tienen el mismo ancho y el contenido no «brinca» al cambiar de pestaña. */
+  html { -webkit-tap-highlight-color: transparent; scrollbar-gutter: stable; }
+  body {
+    @apply bg-canvas font-sans text-slate-900 antialiased;
+    min-height: 100dvh;
+  }
+  /* Títulos de página y de sección: Montserrat. Texto, formularios, botones y números: Inter. */
+  h1, h2 { @apply font-display tracking-tight; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-brand-500; }
+}
+
+/* Presionar = responder (scale .97). Solo transform: no dispara layout. */
+@utility pressable {
+  transition: transform 160ms var(--ease-out);
+  &:active:not(:disabled) { transform: scale(0.97); }
+}
+
+/* Tarjetas del organigrama: HTML que dibuja d3-org-chart dentro del SVG (OrgChartView.tsx). */
+@layer components {
+  .ws-org-card {
+    @apply flex h-full items-center gap-3 rounded-2xl border border-slate-200 bg-surface px-3 text-left shadow-sm;
+    font-family: var(--font-sans);
+  }
+  .ws-org-card--root { @apply justify-center bg-brand-50; }
+  .ws-org-logo { @apply size-9 rounded-xl; }
+  .ws-org-photo { @apply size-14 shrink-0 rounded-full object-cover; }
+  .ws-org-initials { @apply grid place-items-center bg-brand-100 text-lg font-bold text-brand-700; }
+  .ws-org-text { @apply grid min-w-0 gap-0.5; }
+  .ws-org-name { @apply truncate text-sm font-bold text-slate-900; }
+  a.ws-org-name:hover { @apply text-brand-600 underline; }
+  .ws-org-job { @apply truncate text-xs text-slate-500; }
+  .ws-org-dept { @apply mt-1 w-fit max-w-full truncate rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600; }
+  .ws-org-toggle {
+    @apply grid h-6 min-w-6 place-items-center rounded-full border border-slate-200 bg-surface px-1.5 text-[11px] font-bold text-slate-600 shadow-sm;
+    font-family: var(--font-sans);
+  }
+}
+
+/* Contenido de un artículo del blog (HTML limpio del servidor) y el editor Tiptap: mismo estilo, así lo que
+   se escribe se ve igual a como se publica. Medida de lectura ~70 caracteres. */
+@layer components {
+  .ws-article { @apply text-[17px] leading-relaxed text-slate-800; overflow-wrap: anywhere; }
+  .ws-article > * + * { @apply mt-4; }
+  .ws-article h2 { @apply mt-8 text-2xl font-bold text-slate-900; }
+  .ws-article h3 { @apply mt-6 font-display text-xl font-bold text-slate-900; }
+  .ws-article h4 { @apply mt-5 text-base font-bold text-slate-900; }
+  .ws-article a { @apply font-medium text-brand-600 underline underline-offset-2 hover:text-brand-700; }
+  .ws-article ul { @apply list-disc pl-6; }
+  .ws-article ol { @apply list-decimal pl-6; }
+  .ws-article li + li { @apply mt-1.5; }
+  .ws-article li > p { @apply m-0; }
+  .ws-article blockquote { @apply border-l-4 border-brand-200 pl-4 text-slate-600 italic; }
+  .ws-article code { @apply rounded bg-slate-100 px-1.5 py-0.5 text-[0.9em]; }
+  .ws-article pre { @apply overflow-x-auto rounded-xl bg-slate-900 p-4 text-sm text-slate-100; }
+  .ws-article pre code { @apply bg-transparent p-0 text-inherit; }
+  .ws-article hr { @apply my-8 border-slate-200; }
+  .ws-article img { @apply h-auto max-w-full rounded-xl; }
+  .ws-article table { @apply w-full border-collapse text-sm; }
+  .ws-article th, .ws-article td { @apply border border-slate-200 px-3 py-2 text-left; }
+  .ws-article mark { @apply rounded bg-amber-100 px-0.5; }
+  /* Editor: el marcador «Escribe aquí…» del primer párrafo vacío. */
+  .ws-article .is-editor-empty:first-child::before {
+    @apply pointer-events-none float-left h-0 text-slate-400;
+    content: attr(data-placeholder);
+  }
+}
+
+/* Modal de escritorio (components/ui/Sheet.tsx): entra con fundido y un ligero crecimiento (200 ms), sale
+   más rápido (150 ms). El fondo solo funde. Escala desde .96, nunca desde 0: se siente natural. */
+@keyframes ws-fade-in { from { opacity: 0; } }
+@keyframes ws-fade-out { to { opacity: 0; } }
+@keyframes ws-dialog-in { from { opacity: 0; transform: scale(0.96); } }
+@keyframes ws-dialog-out { to { opacity: 0; transform: scale(0.96); } }
+.ws-overlay[data-state='open'] { animation: ws-fade-in 200ms var(--ease-out); }
+.ws-overlay[data-state='closed'] { animation: ws-fade-out 150ms ease-in; }
+.ws-dialog[data-state='open'] { animation: ws-dialog-in 200ms var(--ease-out); }
+.ws-dialog[data-state='closed'] { animation: ws-dialog-out 150ms ease-in; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+  /* La barra de los estados mide tiempo (no es adorno): conserva su duración. */
+  .story-progress { animation-duration: var(--story-seconds) !important; }
+  /* Adorno en bucle: con «reducir movimiento» se queda quieto (1 ms en bucle parpadearía). */
+  .ws-float { animation: none !important; }
+}

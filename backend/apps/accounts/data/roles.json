@@ -1,0 +1,68 @@
+{
+  "_comment": "Roles básicos de partida. En cada «migrate» se crean los que no existan (por nombre); los que ya existen no se tocan, así se respetan los cambios hechos en el admin. «manage.py load_roles --update» vuelve a dejarlos como aquí. Los permisos deben existir en permissions.json. Todo lo que se crea pasa por permisos: los roles marcados «is_default» son lo básico que recibe cada usuario nuevo (y se pueden quitar a alguien en particular).",
+  "roles": [
+    {
+      "name": "Lector",
+      "description": "Lo básico para usar Workspace en modo lectura: ver publicaciones, estados, noticias, documentos compartidos (y descargarlos), formularios, sus tickets, anuncios, el directorio y el organigrama. Sin «.all»: nunca ve lo que no le corresponde.",
+      "is_default": true,
+      "permissions": [
+        "accounts.users.view",
+        "org.departments.view",
+        "org.chart.view",
+        "social.posts.view",
+        "social.stories.view",
+        "blog.articles.view",
+        "documents.documents.view",
+        "documents.documents.download",
+        "forms.forms.view",
+        "helpdesk.tickets.view",
+        "marketplace.listings.view"
+      ]
+    },
+    {
+      "name": "Influencer",
+      "description": "Casi todo el Inicio: publicar y subir estados (y editar o eliminar los propios), comentar, reaccionar (también en noticias) y seguir a otras personas.",
+      "is_default": true,
+      "permissions": [
+        "social.posts.create",
+        "social.posts.update",
+        "social.posts.delete",
+        "social.comments.create",
+        "social.comments.update",
+        "social.comments.delete",
+        "social.reactions.create",
+        "social.stories.create",
+        "social.stories.delete",
+        "social.follows.create",
+        "blog.comments.create",
+        "blog.comments.update",
+        "blog.comments.delete"
+      ]
+    },
+    {
+      "name": "Vendedor",
+      "description": "Publicar anuncios en el Marketplace (y administrar los propios).",
+      "is_default": true,
+      "permissions": [
+        "marketplace.listings.create"
+      ]
+    },
+    {
+      "name": "Solicitante de soporte",
+      "description": "Levantar tickets en la Mesa de ayuda y dar seguimiento a los propios.",
+      "is_default": true,
+      "permissions": [
+        "helpdesk.tickets.create"
+      ]
+    },
+    {
+      "name": "Blogger",
+      "description": "Escribe y publica noticias (y administra las propias).",
+      "is_default": false,
+      "permissions": [
+        "blog.articles.view",
+        "blog.articles.create"
+      ]
+    }
+  ]
+}

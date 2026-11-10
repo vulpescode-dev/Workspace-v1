@@ -1,0 +1,287 @@
+{
+  "_comment": "Catálogo de permisos de negocio. Código = app.recurso.acción[.all]. Acciones base: view, create, update, delete; «.all» = sobre registros de otras personas (sin «.all», solo los propios). Acciones especiales: assign, attend, export, import, print, download, publish, pin, send, manage. Se carga en cada «migrate» y con «manage.py load_permissions» (--prune borra los que ya no estén aquí). Los marcados ★ ya los usa el código: no cambiar su código.",
+  "apps": [
+    {
+      "code": "accounts",
+      "name": "Cuentas",
+      "resources": [
+        {
+          "code": "users",
+          "name": "Usuarios",
+          "actions": {
+            "view": "Ver el directorio de personas.",
+            "view.all": "Ver la ficha completa de cualquier persona, incluidos datos privados (solo lectura).",
+            "create": "Dar de alta usuarios.",
+            "update.all": "Editar el perfil de otras personas.",
+            "delete.all": "Dar de baja (desactivar) usuarios.",
+            "import": "Importar usuarios desde un archivo.",
+            "export": "Exportar el directorio de personas."
+          }
+        },
+        {
+          "code": "roles",
+          "name": "Roles",
+          "actions": {
+            "view": "Ver los roles y sus permisos.",
+            "create": "Crear roles.",
+            "update": "Editar roles y sus permisos.",
+            "delete": "Eliminar roles.",
+            "assign": "Asignar y quitar roles a usuarios."
+          }
+        }
+      ]
+    },
+    {
+      "code": "org",
+      "name": "Organización",
+      "resources": [
+        {
+          "code": "departments",
+          "name": "Departamentos",
+          "actions": {
+            "view": "Ver los departamentos.",
+            "create": "Crear departamentos.",
+            "update": "Editar departamentos (nombre, jefe, departamento padre).",
+            "delete": "Eliminar departamentos.",
+            "assign": "Asignar personas a un departamento y su jefe directo."
+          }
+        },
+        {
+          "code": "chart",
+          "name": "Organigrama",
+          "actions": {
+            "view": "Ver el organigrama.",
+            "print": "Imprimir el organigrama.",
+            "export": "Exportar el organigrama."
+          }
+        }
+      ]
+    },
+    {
+      "code": "social",
+      "name": "Social",
+      "resources": [
+        {
+          "code": "posts",
+          "name": "Publicaciones",
+          "actions": {
+            "view": "Ver el feed de publicaciones.",
+            "view.all": "Ver todas las publicaciones aunque su audiencia no te incluya (solo lectura).",
+            "create": "Publicar en el feed.",
+            "update": "Editar sus propias publicaciones.",
+            "delete": "Eliminar sus propias publicaciones.",
+            "delete.all": "Eliminar publicaciones de otras personas (moderación).",
+            "pin": "Fijar publicaciones al inicio del feed de todos."
+          }
+        },
+        {
+          "code": "comments",
+          "name": "Comentarios",
+          "actions": {
+            "create": "Comentar publicaciones.",
+            "update": "Editar sus propios comentarios.",
+            "delete": "Eliminar sus propios comentarios.",
+            "delete.all": "Eliminar comentarios de otras personas (moderación)."
+          }
+        },
+        {
+          "code": "reactions",
+          "name": "Reacciones",
+          "actions": {
+            "create": "Reaccionar a publicaciones, comentarios y noticias."
+          }
+        },
+        {
+          "code": "stories",
+          "name": "Estados",
+          "actions": {
+            "view": "Ver los estados.",
+            "create": "Subir estados.",
+            "delete": "Eliminar sus propios estados.",
+            "delete.all": "Eliminar estados de otras personas (moderación)."
+          }
+        },
+        {
+          "code": "follows",
+          "name": "Seguir",
+          "actions": {
+            "create": "Seguir a otras personas."
+          }
+        }
+      ]
+    },
+    {
+      "code": "blog",
+      "name": "Noticias",
+      "resources": [
+        {
+          "code": "articles",
+          "name": "Noticias",
+          "actions": {
+            "view": "Leer las noticias publicadas.",
+            "view.all": "Ver borradores y noticias programadas de otras personas (solo lectura).",
+            "create": "★ Escribir y publicar noticias (y administrar las propias).",
+            "update.all": "Editar noticias de otras personas.",
+            "delete.all": "Eliminar noticias de otras personas.",
+            "print": "Imprimir noticias."
+          }
+        },
+        {
+          "code": "categories",
+          "name": "Categorías de noticias",
+          "actions": {
+            "create": "Crear categorías de noticias.",
+            "update": "Editar categorías de noticias.",
+            "delete": "Eliminar categorías de noticias."
+          }
+        },
+        {
+          "code": "comments",
+          "name": "Comentarios de noticias",
+          "actions": {
+            "create": "Comentar noticias.",
+            "update": "Editar sus propios comentarios en noticias.",
+            "delete": "Eliminar sus propios comentarios en noticias.",
+            "delete.all": "Eliminar comentarios de otras personas en noticias (moderación)."
+          }
+        }
+      ]
+    },
+    {
+      "code": "documents",
+      "name": "Documentos",
+      "resources": [
+        {
+          "code": "documents",
+          "name": "Documentos",
+          "actions": {
+            "view": "Ver los documentos compartidos contigo.",
+            "view.all": "★ Consultar todos los documentos aunque no estén compartidos contigo (solo lectura).",
+            "create": "★ Subir documentos nuevos (y administrar los propios).",
+            "manage": "★ Administrar todos los documentos: ficha, privacidad, versiones y eliminar.",
+            "download": "Descargar (y previsualizar) los archivos de los documentos que puede ver. Quien administra el documento siempre puede.",
+            "print": "Imprimir documentos.",
+            "export": "Exportar el listado de documentos."
+          }
+        },
+        {
+          "code": "categories",
+          "name": "Categorías de documentos",
+          "actions": {
+            "create": "Crear categorías de documentos.",
+            "update": "Editar categorías de documentos.",
+            "delete": "Eliminar categorías de documentos."
+          }
+        }
+      ]
+    },
+    {
+      "code": "forms",
+      "name": "Formularios",
+      "resources": [
+        {
+          "code": "forms",
+          "name": "Formularios",
+          "actions": {
+            "view": "Ver y responder los formularios dirigidos a ti.",
+            "view.all": "Ver todos los formularios y sus resultados aunque no sean tuyos (solo lectura).",
+            "create": "★ Crear formularios y ver sus resultados.",
+            "update.all": "Editar formularios de otras personas.",
+            "delete.all": "Eliminar formularios de otras personas.",
+            "print": "Imprimir formularios."
+          }
+        },
+        {
+          "code": "submissions",
+          "name": "Respuestas",
+          "actions": {
+            "view.all": "Ver los resultados de cualquier formulario que pueda abrir (solo lectura).",
+            "export": "Exportar a CSV las respuestas de formularios ajenos cuyos resultados puede ver (las de los propios, siempre).",
+            "print": "Imprimir respuestas.",
+            "delete.all": "Eliminar respuestas de cualquier formulario."
+          }
+        }
+      ]
+    },
+    {
+      "code": "helpdesk",
+      "name": "Mesa de ayuda",
+      "resources": [
+        {
+          "code": "tickets",
+          "name": "Tickets",
+          "actions": {
+            "view": "Ver sus propios tickets.",
+            "view.all": "★ Consultar todos los tickets de todos los departamentos (solo lectura).",
+            "create": "Levantar tickets.",
+            "attend": "★ Atender los tickets de su departamento (agente).",
+            "assign": "Asignar tickets a otro agente (tomarlo uno mismo basta con «attend»).",
+            "delete.all": "Eliminar tickets.",
+            "export": "Exportar tickets.",
+            "print": "Imprimir tickets."
+          }
+        },
+        {
+          "code": "categories",
+          "name": "Categorías de tickets",
+          "actions": {
+            "create": "Crear categorías de tickets.",
+            "update": "Editar categorías de tickets.",
+            "delete": "Eliminar categorías de tickets."
+          }
+        }
+      ]
+    },
+    {
+      "code": "marketplace",
+      "name": "Marketplace",
+      "resources": [
+        {
+          "code": "listings",
+          "name": "Anuncios",
+          "actions": {
+            "view": "Ver los anuncios.",
+            "create": "Publicar anuncios.",
+            "update.all": "Editar anuncios de otras personas.",
+            "delete.all": "Eliminar anuncios de otras personas (moderación)."
+          }
+        },
+        {
+          "code": "categories",
+          "name": "Categorías de anuncios",
+          "actions": {
+            "create": "Crear categorías de anuncios.",
+            "update": "Editar categorías de anuncios.",
+            "delete": "Eliminar categorías de anuncios."
+          }
+        }
+      ]
+    },
+    {
+      "code": "notifications",
+      "name": "Avisos",
+      "resources": [
+        {
+          "code": "notifications",
+          "name": "Avisos",
+          "actions": {
+            "send": "Enviar avisos a toda la empresa o a departamentos."
+          }
+        }
+      ]
+    },
+    {
+      "code": "catalogs",
+      "name": "Catálogos",
+      "resources": [
+        {
+          "code": "emojis",
+          "name": "Emojis de reacciones",
+          "actions": {
+            "update": "Activar, desactivar y recargar los emojis de reacciones."
+          }
+        }
+      ]
+    }
+  ]
+}

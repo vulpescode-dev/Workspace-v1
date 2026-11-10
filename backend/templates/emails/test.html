@@ -1,0 +1,8 @@
+{% extends "emails/base.html" %}
+{% block preheader %}Prueba de correo de {{ site_name }}{% endblock %}
+{% block title %}¡Hola{% if name %}, {{ name }}{% endif %}! 👋{% endblock %}
+{% block content %}
+<p style="margin:0 0 16px;">Este es un correo de prueba de {{ site_name }}. Si lo estás leyendo, el envío de correos funciona.</p>
+<p style="margin:0 0 24px;">Así se verán los avisos que enviemos desde la plataforma.</p>
+<a href="{{ site_url }}" style="display:inline-block; background:#0066cc; color:#ffffff; text-decoration:none; font-weight:bold; padding:12px 24px; border-radius:999px;">Abrir {{ site_name }}</a>
+{% endblock %}

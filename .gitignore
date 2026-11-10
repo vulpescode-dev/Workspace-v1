@@ -1,0 +1,24 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# Otros editores (los de cada persona)
+.idea/
+*.swp
+*.swo
+*~
+
+# Variables de entorno: llaves, contraseñas y hosts de cada equipo (se suben solo los .env.example)
+.env
+.env.*
+!.env.example
+
+# Registros
+*.log
+logs/
+
+# Ajustes personales de Claude Code (la configuración compartida, .claude/launch.json, sí se sube)
+.claude/settings.local.json
